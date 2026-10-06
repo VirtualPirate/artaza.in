@@ -38,8 +38,7 @@ export and social metadata updates follow design review.
   The file marked `preview: true` supplies the original `/blog-post/` preview.
 - `src/assets/projects/`: source screenshots of the featured projects.
   Astro generates responsive WebP versions at build time.
-- `public/resume.txt`: downloadable text résumé based on the same sources.
-  A PDF can replace it by updating `profile.resume`.
+- `public/artaza_resume.pdf`: downloadable PDF résumé linked through `profile.resume`.
 - `src/assets/social.svg` and `public/favicon.svg`: sharing image and icon.
   After editing the SVG, regenerate the PNG used for social cards:
 

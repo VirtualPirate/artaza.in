@@ -20,7 +20,7 @@ export const profile = {
   bio: ['I build fintech pipelines, reliable APIs, and AI automation,', 'building at Finlens (YC W20) and open source contributor at the Rust Ecosystem.'],
   description: 'Artaza Sameen, a backend engineer at Finlens based in Kolkata. Explore fintech systems, AI automation, side projects, Rust contributions, and writing.',
   email: 'artaza.developer@gmail.com',
-  resume: '/resume.txt',
+  resume: '/artaza_resume.pdf',
   socials: [
     { label: 'Email', href: 'mailto:artaza.developer@gmail.com' },
     { label: 'GitHub', href: 'https://github.com/VirtualPirate' },
