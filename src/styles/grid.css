@@ -67,7 +67,9 @@
   filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 8px currentColor);
   transition: opacity 220ms ease;
 }
-@media (prefers-reduced-motion: no-preference) {
+/* The logo fades as a whole; its SVG artwork does not need the changing lift. */
+.grid-logo use { --lift: 0; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .grid-page::before {
     content: "";
     position: absolute;
@@ -78,6 +80,16 @@
     opacity: var(--grid-active, 0);
     transition: opacity 160ms ease;
   }
+}
+@media (hover: none), (pointer: coarse) {
+  .grid-cell { box-shadow: none; transition: transform 220ms ease; }
+  .grid-cell::before { box-shadow: none; }
+  .grid-cell::after {
+    height: 12px;
+    transform: skewX(14deg) scaleY(var(--lift));
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+  .grid-logo { filter: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .grid-cell, .grid-cell::before, .grid-cell::after, .grid-logo { transition: none; }

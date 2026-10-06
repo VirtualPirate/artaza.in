@@ -20,7 +20,7 @@ const categories = [{ id: 'experience', title: 'Experience' }, { id: 'side-produ
       <h2 class="panel-title">Experience</h2>
       <p class="card-description">{about}</p>
       <div class="work-cards">
-        {experience.map(job => <article class="work-card"><div class="card-heading"><span class="card-logo" aria-hidden="true"><Image src={job.logoImage} alt={`${job.company} logo`} width={48} height={48} widths={[48, 96]} sizes="48px" format="webp" loading="lazy" /></span><div><h3>{job.company}</h3><p class="job-role">{job.role}</p><p class="job-date"><time datetime={job.start}>{job.startLabel}</time> — {job.end ? <time datetime={job.end}>{job.endLabel}</time> : job.endLabel}</p></div></div><p class="card-description">{job.description}</p></article>)}
+        {experience.map(job => <article class="work-card"><div class="card-heading"><span class="card-logo" aria-hidden="true"><Image src={job.logoImage} alt={`${job.company} logo`} width={48} height={48} widths={[48, 96]} sizes="48px" format="webp" loading="lazy" /></span><div><h3>{job.company}</h3><p class="job-role">{job.role}</p><p class="job-date"><time datetime={job.start}>{job.startLabel}</time> — {job.end ? <time datetime={job.end}>{job.endLabel}</time> : job.endLabel}</p></div></div><ul class="card-description achievements">{job.achievements.map(achievement => <li>{achievement}</li>)}</ul></article>)}
       </div>
       <a class="text-link" href={profile.resume} target="_blank" rel="noopener noreferrer">View résumé <span aria-hidden="true">↗</span></a>
       <section class="work-panel" aria-labelledby="skills-heading">

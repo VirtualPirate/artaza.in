@@ -16,8 +16,8 @@ export const profile = {
   name: 'Artaza Sameen',
   brand: 'artaza',
   role: 'Backend engineer',
-  tagline: 'Backend engineer. Systems, data & AI.',
-  bio: ['I build fintech pipelines, reliable APIs, and AI automation,', 'building at Finlens (YC W20) and open source contributor at the Rust Ecosystem.'],
+  tagline: 'Backend engineer. Fintech & AI.',
+  bio: ['I build financial integrations, reliable APIs, and AI automation', 'at Finlens (YC W20).'],
   description: 'Artaza Sameen, a backend engineer at Finlens based in Kolkata. Explore fintech systems, AI automation, side projects, Rust contributions, and writing.',
   email: 'artaza.developer@gmail.com',
   resume: '/artaza_resume.pdf',
@@ -37,12 +37,12 @@ export const homeLinks = [
 export type Tag = { label: string; color: 'blue' | 'purple' | 'green' | 'yellow' | 'orange' };
 
 export const experience = [
-  { company: 'Finlens', logoImage: finlensLogo, role: 'SDE 2 — Backend', start: '2025-03', startLabel: 'Mar 2025', end: null, endLabel: 'Present', description: 'Migrated infrastructure from AWS to GCP. Built accountant dashboards, role-based access for firm employees, and accountant task management.' },
-  { company: 'Finlens', logoImage: finlensLogo, role: 'Full Stack Developer', start: '2023-07', startLabel: 'Jul 2023', end: '2025-03', endLabel: 'Mar 2025', description: 'Built bank integrations, AI transaction categorization, Stripe payments and revenue recognition, and fast financial reporting APIs. Migrated Express to NestJS and set up CI/CD with Docker and GitHub Actions.' },
-  { company: 'Stock Register', logoImage: stockRegisterLogo, role: 'Frontend Web Developer · Internship', start: '2023-03', startLabel: 'Mar 2023', end: '2023-07', endLabel: 'Jul 2023', description: 'Launched an inventory management web app with real-time asset visibility. Used React and TanStack Query for responsive lists and filtering, and standardized state management across complex workflows.' },
+  { company: 'Finlens', logoImage: finlensLogo, role: 'SDE 2 — Backend', start: '2025-03', startLabel: 'Mar 2025', end: null, endLabel: 'Present', achievements: ['Migrated production infrastructure from AWS to GCP.', 'Built accountant dashboards, task management, and role-based access for firm employees.'] },
+  { company: 'Finlens', logoImage: finlensLogo, role: 'Full Stack Developer', start: '2023-07', startLabel: 'Jul 2023', end: '2025-03', endLabel: 'Mar 2025', achievements: ['Built bank integrations, AI transaction categorization, Stripe payments, revenue recognition, and financial reporting APIs.', 'Migrated Express to NestJS and set up CI/CD with Docker and GitHub Actions.'] },
+  { company: 'Stock Register', logoImage: stockRegisterLogo, role: 'Frontend Web Developer · Internship', start: '2023-03', startLabel: 'Mar 2023', end: '2023-07', endLabel: 'Jul 2023', achievements: ['Launched an inventory management web app with real-time asset visibility.', 'Built responsive lists and filtering with React and TanStack Query; standardized state management across workflows.'] },
 ];
 
-export const about = 'I’m a self-taught programmer who started at 14. Today, I have over three years of production experience building SaaS products, multi-tenant fintech systems, and AI automation. My work spans data modeling, background jobs, and reliable API design in TypeScript and Python.';
+export const about = 'Over three years building production SaaS and fintech systems. Self-taught since 14, working across backend APIs, data pipelines, and AI automation.';
 
 export const skillGroups = [
   { title: 'Backend & data', tags: [{ label: 'TypeScript', color: 'blue' }, { label: 'NestJS', color: 'purple' }, { label: 'Python', color: 'yellow' }, { label: 'FastAPI', color: 'green' }, { label: 'PostgreSQL', color: 'blue' }, { label: 'MongoDB', color: 'green' }, { label: 'TypeORM', color: 'orange' }, { label: 'SQLAlchemy', color: 'orange' }, { label: 'Rust', color: 'orange' }] as Tag[] },
@@ -64,7 +64,12 @@ export const projects = [
     tags: [{ label: 'SaaS starter', color: 'green' }, { label: 'TypeScript', color: 'blue' }] as Tag[],
     detailTags: [{ label: 'NestJS', color: 'purple' }, { label: 'React', color: 'blue' }, { label: 'PostgreSQL', color: 'blue' }, { label: 'Kysely', color: 'green' }] as Tag[],
     description: 'A full-stack TypeScript SaaS starter with auth, organizations, roles, and email built in.',
-    summary: 'A full-stack TypeScript template for building multi-tenant SaaS products. Includes email and Google sign-in, email verification, organizations, role-based access, member invitations, and transactional email. Built with NestJS, React, PostgreSQL, Kysely, and Better Auth, with shared API types and validation.',
+    summary: 'A full-stack TypeScript starter for multi-tenant SaaS, with authentication, organizations, roles, and email already connected.',
+    caseStudy: [
+      { title: 'What I built', description: 'A full-stack SaaS foundation covering sign-in, email verification, organizations, member invitations, role-based access, and transactional email.' },
+      { title: 'Engineering decisions', description: 'NestJS and React share API types and validation. PostgreSQL and Kysely handle persistence, while Better Auth supplies email and Google sign-in.' },
+      { title: 'What it enables', description: 'Developers can start with working account and organization flows, then build their product on top. The source and setup documentation are public.' },
+    ],
     urlLabel: 'github.com/VirtualPirate/launchstack', icon: 'github' as const,
     links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/launchstack' }, { label: 'Documentation', href: 'https://github.com/VirtualPirate/launchstack#readme' }],
     image: launchstackImage, imageAlt: 'LaunchStack dashboard with sidebar navigation and organization controls.', imageCaption: 'LaunchStack’s dashboard from the project repository.',
@@ -74,7 +79,12 @@ export const projects = [
     tags: [{ label: 'Desktop app', color: 'blue' }, { label: 'AI', color: 'purple' }] as Tag[],
     detailTags: [{ label: 'Electron', color: 'blue' }, { label: 'NestJS', color: 'purple' }, { label: 'React', color: 'blue' }, { label: 'PGlite', color: 'green' }] as Tag[],
     description: 'An AI-powered Git reporting app for founders and managers.',
-    summary: 'An AI-powered Git reporting app for founders and managers. DevSummary tracks selected GitHub branches, classifies commits, and generates scheduled or on-demand briefs for projects, teams, and repositories. Built with Electron, NestJS, React, and PGlite, with the database and credentials stored on your computer.',
+    summary: 'A desktop app that turns GitHub activity into AI-generated briefs for founders and managers, with its database and credentials stored on your computer.',
+    caseStudy: [
+      { title: 'What I built', description: 'A desktop app that turns activity from selected GitHub branches into commit classifications and scheduled or on-demand briefs for projects, teams, and repositories.' },
+      { title: 'Engineering decisions', description: 'Electron packages the app, with React for the interface and NestJS for the backend. PGlite keeps the database on the user’s computer, where credentials are also stored.' },
+      { title: 'What it enables', description: 'Founders and managers can review grouped development activity through generated briefs. The desktop app’s source is public, including the reporting workflow and local storage implementation.' },
+    ],
     urlLabel: 'github.com/VirtualPirate/devsummary-desktop', icon: 'github' as const,
     links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/devsummary-desktop' }, { label: 'Visit desktop website', href: 'https://devsummary.com/desktop' }],
     image: devsummaryImage, imageAlt: 'DevSummary dashboard preview showing code changes, commit volume, work categories, and activity charts.', imageCaption: 'DevSummary’s dashboard preview from the project repository.',

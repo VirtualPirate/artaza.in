@@ -10,6 +10,7 @@ import { technologies } from "../data/technologies.js";
   let cells = [];
   let cursor = null;
   let frame = 0;
+  let lastAnimation = -Infinity;
 
   function buildGrid() {
     // Reduced-motion visitors keep the CSS grid without decorative DOM.
@@ -47,11 +48,12 @@ import { technologies } from "../data/technologies.js";
     const bounds = cursor && grid.getBoundingClientRect();
     const x = cursor ? cursor.x - bounds.left : 0;
     const y = cursor ? cursor.y - bounds.top : 0;
-    if (cursor) {
+    if (cursor && pointer.matches) {
       style.setProperty('--cursor-x', `${x}px`);
       style.setProperty('--cursor-y', `${y}px`);
     }
     for (const cell of cells) {
+      if (!cell.lift && (!cursor || Math.abs(x - cell.x) >= 180 || Math.abs(y - cell.y) >= 180)) continue;
       const lift = cursor ? Math.max(0, 1 - Math.hypot(x - cell.x, y - cell.y) / 180) ** 2 : 0;
       if (lift !== cell.lift) cell.element.style.setProperty('--lift', lift.toFixed(3));
       cell.lift = lift;
@@ -66,17 +68,24 @@ import { technologies } from "../data/technologies.js";
   }
 
   function animateGrid(time) {
-    cursor = {
-      x: window.innerWidth * (0.5 + 0.35 * Math.sin(time / 2400)),
-      y: window.innerHeight * (0.5 + 0.35 * Math.sin(time / 3200)),
-    };
-    style.setProperty('--grid-active', '1');
-    updateGrid();
+    // ponytail: cap mobile updates at 30 FPS; raise only with measured device headroom.
+    if (time - lastAnimation >= 1000 / 30) {
+      lastAnimation = time;
+      cursor = {
+        x: window.innerWidth * (0.5 + 0.35 * Math.sin(time / 2400)),
+        y: window.innerHeight * (0.5 + 0.35 * Math.sin(time / 3200)),
+      };
+      updateGrid();
+    }
     frame = requestAnimationFrame(animateGrid);
   }
 
   function startAnimation() {
-    if (motion.matches && !pointer.matches && !document.hidden && !frame) frame = requestAnimationFrame(animateGrid);
+    if (motion.matches && !pointer.matches && !document.hidden && !frame) {
+      lastAnimation = -Infinity;
+      style.setProperty('--grid-active', '1');
+      frame = requestAnimationFrame(animateGrid);
+    }
   }
 
   document.addEventListener('pointermove', event => {

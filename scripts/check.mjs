@@ -19,6 +19,16 @@ const home = read('dist/index.html');
 assert.match(home, /Artaza Sameen/);
 assert.match(home, /mailto:artaza\.developer@gmail\.com/);
 assert.match(home, /https:\/\/www\.linkedin\.com\/in\/artaza-sameen-4b995b23a\//);
+assert.match(home, /href="#selected-work"/, 'Homepage offers a direct path to selected work');
+assert.match(home, /href="https:\/\/github.com\/tauri-apps\/plugins-workspace\/pull\/1797"/, 'Homepage proof links to the actual Tauri contribution');
+const selectedWork = home.match(/<section class="selected-work"[\s\S]*?<\/section>/)?.[0];
+assert.ok(selectedWork, 'Selected work is available without JavaScript');
+for (const slug of ['devsummary-desktop', 'launchstack']) {
+  assert.ok(selectedWork.includes(`href="/projects/${slug}/"`), `${slug}: reachable from homepage`);
+  assert.match(read(`dist/projects/${slug}/index.html`), /class="project-story"/, `${slug}: includes engineering context`);
+}
+assert.equal((selectedWork.match(/<img\b/g) || []).length, 2, 'Both selected projects have a visual preview');
+assert.equal((read('dist/work/index.html').match(/class="card-description achievements"/g) || []).length, 3, 'Each role has scannable achievements');
 assert.match(read('dist/resume.txt'), /Finlens — SDE 2, Backend/);
 for (const detail of ['Stock Register', 'id="skills-heading"', 'FastAPI', 'Education', 'Maulana Mazharul Haque']) assert.ok(read('dist/work/index.html').includes(detail), `Work page includes ${detail}`);
 assert.match(read('dist/blog/index.html'), /Read on LinkedIn/);
@@ -235,6 +245,7 @@ tabs[0].events.keydown({ key: 'Tab', preventDefault() { assert.fail('Tab must ke
 const glowScript = read('src/scripts/grid.js').replace(/^import .*?;\n/, '');
 const css = read('src/styles/grid.css');
 const glow = {};
+let glowWrites = 0, distanceCalls = 0;
 const pointerEvents = {};
 const grid = {
   clientWidth: 800, clientHeight: 1100,
@@ -250,13 +261,13 @@ const randomValues = Array.from({ length: 8 }, (_, index) => [0.1, index / 8, 0.
 let randomIndex = 0;
 runInNewContext(glowScript, {
   technologies,
-  Math: Object.assign(Object.create(Math), { random: () => randomValues[randomIndex++ % randomValues.length] }),
+  Math: Object.assign(Object.create(Math), { random: () => randomValues[randomIndex++ % randomValues.length], hypot(...args) { distanceCalls++; return Math.hypot(...args); } }),
   matchMedia: query => query === '(hover: hover) and (pointer: fine)' ? pointer : motion,
   requestAnimationFrame(callback) { const id = nextFrame++; frames.set(id, callback); return id; },
   cancelAnimationFrame(id) { frames.delete(id); },
   document: {
     get hidden() { return viewport.hidden; },
-    body: { style: { setProperty(name, value) { glow[name] = value; } }, classList: { add() {}, remove() {} }, insertAdjacentHTML(_position, markup) { gridMarkup = markup; } },
+    body: { style: { setProperty(name, value) { glowWrites++; glow[name] = value; } }, classList: { add() {}, remove() {} }, insertAdjacentHTML(_position, markup) { gridMarkup = markup; } },
     querySelector: () => grid,
     createDocumentFragment: () => ({ children: [], append(cell) { this.children.push(cell); } }),
     createElement: () => ({ style: { setProperty(name, value) { this[name] = value; } } }),
@@ -367,7 +378,15 @@ assert.ok(grid.children.some(cell => lift(cell) > 0.6), 'Mobile grid cells must 
 assert.equal(glow['--grid-active'], '1');
 const mobileLifts = grid.children.map(lift);
 const mobileLogos = grid.children.map(cell => cell.innerHTML);
+const mobileCalculations = distanceCalls, mobileGlowWrites = glowWrites;
+flushFrame(16);
+assert.equal(distanceCalls, mobileCalculations, 'Mobile tile updates must be capped at 30 FPS');
+assert.equal(frames.size, 1, 'Skipped updates must keep one animation loop');
+flushFrame(34);
+assert.ok(distanceCalls > mobileCalculations, 'Mobile tile updates must resume on the next 30 FPS interval');
 flushFrame(6000);
+assert.ok(distanceCalls - mobileCalculations < grid.children.length / 2, 'Only nearby and previously raised cells need distance calculations');
+assert.equal(glowWrites, mobileGlowWrites, 'Mobile frames must not invalidate the whole page with glow properties');
 assert.notDeepEqual(grid.children.map(lift), mobileLifts, 'Automatic elevation must move across the grid');
 assert.deepEqual(grid.children.map(cell => cell.innerHTML), mobileLogos, 'Animation must keep logos stable');
 pointerEvents.pointermove({ pointerType: 'touch', clientX: 10, clientY: 10 });
@@ -375,7 +394,7 @@ pointerEvents.pointerleave();
 assert.equal(frames.size, 1, 'Touch events must not interrupt or duplicate the animation');
 viewport.scrollY = 1000;
 pointerEvents.scroll();
-flushFrame(6000);
+flushFrame(6034);
 assert.ok(grid.children.some(cell => lift(cell) > 0.6 && parseInt(cell.style.top) >= 1000), 'Mobile animation must follow the visible viewport after scrolling');
 assert.ok(grid.children.filter(cell => parseInt(cell.style.top) < 800).every(cell => lift(cell) === 0), 'Offscreen cells must settle after scrolling');
 resizeGrid();

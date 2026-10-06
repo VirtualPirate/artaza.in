@@ -24,6 +24,9 @@ const logoImage = 'logoImage' in project ? project.logoImage : undefined;
         <figcaption>{project.imageCaption}</figcaption>
       </figure>
     </section>}
+    {project.caseStudy && <section class="project-story" aria-label="Project details">
+      {project.caseStudy.map(section => <div><h2>{section.title}</h2><p>{section.description}</p></div>)}
+    </section>}
   </main>
 <script>import '../../scripts/grid.js';</script>
 </SiteLayout>
