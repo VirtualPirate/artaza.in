@@ -4,14 +4,15 @@ import { technologies } from "../data/technologies.js";
   const grid = document.querySelector('.background-grid');
   if (!grid) return;
 
-  const motion = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+  const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+  const pointer = matchMedia('(hover: hover) and (pointer: fine)');
   const style = document.body.style;
   let cells = [];
   let cursor = null;
   let frame = 0;
 
   function buildGrid() {
-    // Touch and reduced-motion visitors keep the CSS grid without decorative DOM.
+    // Reduced-motion visitors keep the CSS grid without decorative DOM.
     if (!motion.matches) {
       grid.replaceChildren();
       cells = [];
@@ -38,6 +39,7 @@ import { technologies } from "../data/technologies.js";
     grid.replaceChildren(fragment);
     document.body.classList.add('grid-ready');
     hideGlow();
+    startAnimation();
   }
 
   function updateGrid() {
@@ -63,18 +65,36 @@ import { technologies } from "../data/technologies.js";
     style.setProperty('--grid-active', '0');
   }
 
+  function animateGrid(time) {
+    cursor = {
+      x: window.innerWidth * (0.5 + 0.35 * Math.sin(time / 2400)),
+      y: window.innerHeight * (0.5 + 0.35 * Math.sin(time / 3200)),
+    };
+    style.setProperty('--grid-active', '1');
+    updateGrid();
+    frame = requestAnimationFrame(animateGrid);
+  }
+
+  function startAnimation() {
+    if (motion.matches && !pointer.matches && !document.hidden && !frame) frame = requestAnimationFrame(animateGrid);
+  }
+
   document.addEventListener('pointermove', event => {
-    if (!motion.matches || event.pointerType === 'touch') { hideGlow(); return; }
+    if (!motion.matches || !pointer.matches) return;
+    if (event.pointerType === 'touch') { hideGlow(); return; }
     cursor = { x: event.clientX, y: event.clientY };
     style.setProperty('--grid-active', '1');
     if (!frame) frame = requestAnimationFrame(updateGrid);
   }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', hideGlow);
+  document.documentElement.addEventListener('pointerleave', () => { if (pointer.matches) hideGlow(); });
   window.addEventListener('blur', hideGlow);
+  window.addEventListener('focus', startAnimation);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) hideGlow(); else startAnimation(); });
   new ResizeObserver(buildGrid).observe(grid);
   window.addEventListener('scroll', () => {
     if (cursor && !frame) frame = requestAnimationFrame(updateGrid);
   }, { passive: true });
   motion.addEventListener('change', buildGrid);
+  pointer.addEventListener('change', buildGrid);
   buildGrid();
 })();

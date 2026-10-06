@@ -6,7 +6,7 @@ import PaginatedList from '../../components/PaginatedList.astro';
 import { profile, linkedInArticles } from '../../data/portfolio';
 import { posts, previewPost } from '../../data/posts';
 ---
-<SiteLayout title={`Blog — ${profile.name}`} description={`Notes on programming and building things by ${profile.name}.`} active="Blog" breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Blog', href: '/blog/' }]}>
+<SiteLayout title={`Blog — ${profile.name}`} description={`Notes on programming and building things by ${profile.name}.`} active="Blog" interactive breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Blog', href: '/blog/' }]}>
   <main class="shell inner-page" id="main">
     <PageHeading title="Blog" description="Notes on code and things I’m learning." />
     <PaginatedList label="articles">
@@ -17,4 +17,5 @@ import { posts, previewPost } from '../../data/posts';
     </PaginatedList>
     <a class="text-link" href={previewPost.href}>Preview a blog post <span aria-hidden="true">→</span></a>
   </main>
+<script>import '../../scripts/grid.js';</script>
 </SiteLayout>

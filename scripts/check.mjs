@@ -86,8 +86,8 @@ for (const name of pages) {
     assert.equal((html.match(/aria-current="page"/g) || []).length, 1, `${name}: active navigation`);
   }
   if (name.startsWith('blog/') || name.startsWith('blog-post/')) {
-    assert.equal((html.match(/<script\b/g) || []).length, name === 'blog/index.html' ? 2 : 1, `${name}: only the blog listing needs client pagination`);
-    assert.ok(!html.includes('class="background-grid"'), `${name}: static blog background`);
+    assert.equal((html.match(/<script\b/g) || []).length, name === 'blog/index.html' ? 3 : 1, `${name}: only the blog listing needs client pagination and grid animation`);
+    assert.equal(html.includes('class="background-grid"'), name === 'blog/index.html', `${name}: animated background only on the blog listing`);
   }
   for (const [, path] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     if (/^[a-z]+:/i.test(path)) continue;
@@ -187,11 +187,11 @@ tabs[0].events.keydown({ key: 'Tab', preventDefault() { assert.fail('Tab must ke
   const blogHtml = read('dist/blog/index.html');
   const articles = [...blogHtml.matchAll(/<a class="work-card blog-entry"[^>]*>[\s\S]*?<\/a>/g)].map(match => match[0]);
   const blog = listing(blogHtml, articles, 'articles');
-  const longBlog = listing(blogHtml, [...articles, ...articles, ...articles.slice(0, 1)], 'articles');
+  const longBlog = listing(blogHtml, [...articles, ...articles, ...articles.slice(0, 1)].slice(0, 9), 'articles');
   const empty = listing(blogHtml, [], 'articles');
   assert.match(work, /<option value="" selected>All tags<\/option>/, 'The native tag dropdown defaults to all projects');
   assert.equal(projects.cards.length, 6);
-  assert.equal(blog.cards.length, 4);
+  assert.equal(blog.cards.length, 5);
   assert.ok(projects.cards.every(card => card.hidden === undefined), 'Every card is available before JavaScript runs');
   runInNewContext(read('src/scripts/lists.js'), { document: { querySelectorAll: () => [projects, blog, longBlog, empty] } });
   const visible = list => list.cards.filter(card => !card.hidden).map(card => card.id);
@@ -216,7 +216,10 @@ tabs[0].events.keydown({ key: 'Tab', preventDefault() { assert.fail('Tab must ke
   projects.next.click(); projects.previous.click();
   assert.deepEqual(visible(projects), ['0', '1', '2', '3']);
   assert.equal(visible(blog).length, 4, 'Blog pagination is independent of project filtering');
-  assert.ok(blog.previous.disabled && blog.next.disabled && !blog.pagination.hidden);
+  assert.ok(blog.previous.disabled && !blog.next.disabled && !blog.pagination.hidden);
+  blog.next.click();
+  assert.deepEqual(visible(blog), ['4'], 'The additional article appears on page two');
+  blog.previous.click();
   longBlog.next.click();
   assert.deepEqual(visible(longBlog), ['4', '5', '6', '7']);
   longBlog.next.click();
@@ -239,18 +242,20 @@ const grid = {
   replaceChildren(fragment) { this.children = fragment?.children || []; },
 };
 const motion = { matches: true, addEventListener(name, callback) { pointerEvents[name] = callback; } };
+const pointer = { matches: true, addEventListener(_name, callback) { pointerEvents.pointerChange = callback; } };
 const frames = new Map();
 let nextFrame = 1, resizeGrid, gridMarkup;
-const viewport = { innerWidth: 800, innerHeight: 600, scrollX: 0, scrollY: 0, addEventListener(name, callback) { pointerEvents[name] = callback; } };
+const viewport = { innerWidth: 800, innerHeight: 600, scrollX: 0, scrollY: 0, hidden: false, addEventListener(name, callback) { pointerEvents[name] = callback; } };
 const randomValues = Array.from({ length: 8 }, (_, index) => [0.1, index / 8, 0.9]).flat();
 let randomIndex = 0;
 runInNewContext(glowScript, {
   technologies,
   Math: Object.assign(Object.create(Math), { random: () => randomValues[randomIndex++ % randomValues.length] }),
-  matchMedia: () => motion,
+  matchMedia: query => query === '(hover: hover) and (pointer: fine)' ? pointer : motion,
   requestAnimationFrame(callback) { const id = nextFrame++; frames.set(id, callback); return id; },
   cancelAnimationFrame(id) { frames.delete(id); },
   document: {
+    get hidden() { return viewport.hidden; },
     body: { style: { setProperty(name, value) { glow[name] = value; } }, classList: { add() {}, remove() {} }, insertAdjacentHTML(_position, markup) { gridMarkup = markup; } },
     querySelector: () => grid,
     createDocumentFragment: () => ({ children: [], append(cell) { this.children.push(cell); } }),
@@ -267,7 +272,7 @@ runInNewContext(glowScript, {
 assert.ok(read('dist/index.html').includes('class="background-grid" aria-hidden="true"'), 'Astro renders the decorative grid');
 gridMarkup = read('src/components/TechSymbols.astro');
 assert.equal((gridMarkup.match(/<symbol id="tech-/g) || []).length, 8, 'All logo symbols are rendered statically');
-const flushFrame = () => { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback()); };
+const flushFrame = (time = 0) => { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(time)); };
 const lift = cell => Number(cell.style['--lift'] || 0);
 const movePointer = () => pointerEvents.pointermove({ pointerType: 'mouse', clientX: 240, clientY: 180 });
 assert.ok(grid.children.length > 100, 'Grid cells must cover the viewport');
@@ -337,7 +342,7 @@ movePointer(); flushFrame();
 motion.matches = false; pointerEvents.change();
 movePointer(); flushFrame();
 assert.equal(glow['--grid-active'], '0');
-assert.ok(grid.children.every(cell => lift(cell) === 0), 'Reduced motion and coarse pointers must keep grid cells still');
+assert.ok(grid.children.every(cell => lift(cell) === 0), 'Reduced motion must keep grid cells still');
 assert.equal(grid.children.length, 0, 'Reduced motion must avoid decorative DOM entirely');
 motion.matches = true; pointerEvents.change();
 const count = grid.children.length;
@@ -349,6 +354,55 @@ grid.clientHeight = 2400; resizeGrid();
 assert.ok(grid.children.some(cell => Number.parseInt(cell.style.top) >= 2352), 'A taller work tab or loaded content must get full grid coverage without a window resize');
 grid.clientHeight = 600; resizeGrid();
 assert.ok(grid.children.every(cell => Number.parseInt(cell.style.top) < 648), 'The grid must shrink when switching to a shorter tab');
+
+pointer.matches = false;
+viewport.innerWidth = grid.clientWidth = 390;
+viewport.innerHeight = 844;
+grid.clientHeight = 2400;
+resizeGrid();
+assert.ok(grid.children.length > 0, 'Touch devices need real grid cells for elevation');
+assert.equal(frames.size, 1, 'Mobile elevation must start without a pointer event');
+flushFrame(0);
+assert.ok(grid.children.some(cell => lift(cell) > 0.6), 'Mobile grid cells must rise automatically');
+assert.equal(glow['--grid-active'], '1');
+const mobileLifts = grid.children.map(lift);
+const mobileLogos = grid.children.map(cell => cell.innerHTML);
+flushFrame(6000);
+assert.notDeepEqual(grid.children.map(lift), mobileLifts, 'Automatic elevation must move across the grid');
+assert.deepEqual(grid.children.map(cell => cell.innerHTML), mobileLogos, 'Animation must keep logos stable');
+pointerEvents.pointermove({ pointerType: 'touch', clientX: 10, clientY: 10 });
+pointerEvents.pointerleave();
+assert.equal(frames.size, 1, 'Touch events must not interrupt or duplicate the animation');
+viewport.scrollY = 1000;
+pointerEvents.scroll();
+flushFrame(6000);
+assert.ok(grid.children.some(cell => lift(cell) > 0.6 && parseInt(cell.style.top) >= 1000), 'Mobile animation must follow the visible viewport after scrolling');
+assert.ok(grid.children.filter(cell => parseInt(cell.style.top) < 800).every(cell => lift(cell) === 0), 'Offscreen cells must settle after scrolling');
+resizeGrid();
+assert.equal(frames.size, 1, 'Resizing must keep a single mobile animation loop');
+viewport.hidden = true;
+pointerEvents.visibilitychange();
+assert.equal(frames.size, 0, 'Hidden pages must pause automatic elevation');
+assert.ok(grid.children.every(cell => lift(cell) === 0));
+viewport.hidden = false;
+pointerEvents.visibilitychange();
+pointerEvents.focus();
+assert.equal(frames.size, 1, 'Returning to the page must resume only one animation loop');
+flushFrame(8000);
+pointerEvents.blur();
+assert.equal(frames.size, 0, 'An unfocused page must pause automatic elevation');
+pointerEvents.focus();
+assert.equal(frames.size, 1);
+motion.matches = false; pointerEvents.change();
+pointerEvents.focus();
+assert.equal(grid.children.length, 0, 'Reduced motion must keep the static mobile background');
+assert.equal(frames.size, 0, 'Reduced motion must stop the mobile animation');
+motion.matches = true; pointerEvents.change();
+assert.equal(frames.size, 1, 'Turning motion back on must restart mobile elevation');
+pointer.matches = true; pointerEvents.pointerChange();
+assert.equal(frames.size, 0, 'Switching to a fine pointer must stop automatic elevation');
+movePointer(); flushFrame();
+assert.ok(grid.children.some(cell => lift(cell) > 0.6), 'Desktop cursor elevation must still work after switching input devices');
 
 {
 const html = read('dist/grid-shapes/index.html');
