@@ -1,0 +1,28 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Tags from '../../components/Tags.astro';
+import { Image } from 'astro:assets';
+import { projects, profile } from '../../data/portfolio';
+export function getStaticPaths() { return projects.map(project => ({ params: { slug: project.slug }, props: { project } })); }
+const { project } = Astro.props;
+---
+<SiteLayout title={`${project.title} — ${profile.name}`} description={project.summary} active="Work" interactive bodyClass={`project-detail project-${project.theme}`} breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Work', href: '/work/' }, { name: project.title, href: `/projects/${project.slug}/` }]}>
+  <main class="shell inner-page project-page" id="main">
+    <a class="project-back" href="/work/#side-products"><span aria-hidden="true">←</span> Back to projects</a>
+    <div class="project-brand"><span class="card-logo" aria-hidden="true">{project.logo}</span><div><h1>{project.title}</h1><Tags tags={project.detailTags} /></div></div>
+    <p class="project-summary">{project.summary}</p>
+    <div class="project-actions" aria-label="Project links">
+      {project.links.map(link => <a href={link.href} target={link.href.startsWith('https://') ? '_blank' : undefined} rel={link.href.startsWith('https://') ? 'noopener noreferrer' : undefined}>{link.label}{link.href.startsWith('https://') && <> <span aria-hidden="true">↗</span></>}</a>)}
+    </div>
+    <section class="project-shots" aria-labelledby="screenshots-heading">
+      <h2 id="screenshots-heading">Screenshot</h2>
+      <figure>
+        <a class="project-image" href={project.image.src} target="_blank" rel="noopener noreferrer" aria-label={`Open full-size ${project.title} screenshot`}>
+          <Image src={project.image} alt={project.imageAlt} format="webp" widths={[400, 800, project.image.width]} sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 864px) calc(100vw - 64px), 800px" loading="lazy" decoding="async" />
+        </a>
+        <figcaption>{project.imageCaption}</figcaption>
+      </figure>
+    </section>
+  </main>
+<script>import '../../scripts/grid.js';</script>
+</SiteLayout>

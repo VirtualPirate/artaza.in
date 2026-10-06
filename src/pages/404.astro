@@ -1,0 +1,8 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import { profile } from '../data/portfolio';
+---
+<SiteLayout title={`Page not found — ${profile.name}`} description="This page could not be found. Return to the portfolio to keep exploring." noindex>
+  <main class="shell inner-page" id="main"><PageHeading title="Page not found" description="That link doesn’t lead to a page here." /><a class="resume-button" href="/">Back to home <span aria-hidden="true">→</span></a></main>
+</SiteLayout>

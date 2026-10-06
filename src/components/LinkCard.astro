@@ -1,0 +1,19 @@
+---
+import Tags from './Tags.astro';
+import Icon from './Icon.astro';
+import type { Tag } from '../data/portfolio';
+interface Props {
+  title: string; logo: string; description: string; tags: Tag[];
+  href: string; urlLabel: string; icon: 'github' | 'browser';
+}
+const { title, logo, description, tags, href, urlLabel, icon } = Astro.props;
+const external = href.startsWith('https://');
+---
+<a class="work-card" href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+  <div class="card-heading">
+    <span class="card-logo" aria-hidden="true">{logo}</span>
+    <div><h3>{title}</h3><Tags tags={tags} /></div>
+  </div>
+  <p class="card-description">{description}</p>
+  <span class="card-url"><Icon name={icon} /><span class="url-text">{urlLabel}</span><span class="link-arrow" aria-hidden="true">{external ? '↗' : '→'}</span></span>
+</a>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#fff" stroke-opacity=".0784" /></pattern></defs>
+  <rect width="1200" height="630" fill="#000" />
+  <rect width="1200" height="630" fill="url(#grid)" />
+  <text x="112" y="135" fill="#f1f1f1" font-family="Arial,sans-serif" font-size="32" font-weight="600">artaza.</text>
+  <text x="112" y="290" fill="#999" font-family="Arial,sans-serif" font-size="24">Hello, I’m</text>
+  <text x="112" y="380" fill="#f1f1f1" font-family="Arial,sans-serif" font-size="80" letter-spacing="-4">Artaza Sameen.</text>
+  <text x="112" y="444" fill="#f1f1f1" font-family="Arial,sans-serif" font-size="30">Backend engineer. Systems, data &amp; AI.</text>
+  <path d="M112 500H1088" stroke="#262626" />
+  <text x="112" y="548" fill="#999" font-family="Arial,sans-serif" font-size="22">Work, side projects, open source &amp; writing.</text>
+</svg>

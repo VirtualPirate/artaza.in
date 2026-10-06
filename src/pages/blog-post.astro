@@ -1,0 +1,6 @@
+---
+import PostLayout from '../layouts/PostLayout.astro';
+import { previewPost } from '../data/posts';
+const Content = previewPost.Content;
+---
+<PostLayout post={previewPost}><Content /></PostLayout>

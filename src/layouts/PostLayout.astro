@@ -1,0 +1,25 @@
+---
+import SiteLayout from './SiteLayout.astro';
+import Tags from '../components/Tags.astro';
+import { profile } from '../data/portfolio';
+import type { Post } from '../data/posts';
+interface Props { post: Post }
+const { post } = Astro.props;
+const data = post.frontmatter;
+---
+<SiteLayout title={`${data.title} — ${profile.name}`} description={data.description} active="Blog" article={{ title: data.title, date: data.date }} breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Blog', href: '/blog/' }, { name: data.title, href: post.href }]}>
+  <main class="shell inner-page post-page" id="main">
+    <a class="project-back" href="/blog/"><span aria-hidden="true">←</span> All posts</a>
+    <article aria-labelledby="post-title">
+      <header class="post-header">
+        <div class="post-meta">{data.preview && <span>Layout preview</span>}<time datetime={data.date}>{data.dateLabel}</time><span>{profile.name}</span><span>{data.readingTime}</span></div>
+        <h1 id="post-title">{data.title}<span class="period">.</span></h1>
+        <p class="post-lead">{data.lead}</p>
+        <Tags tags={data.tags} />
+      </header>
+      <nav class="post-contents" aria-label="Article sections"><span>In this post</span>{data.sections.map(section => <a href={`#${section.id}`}>{section.title}</a>)}</nav>
+      <div class="post-prose"><slot /></div>
+      <footer class="post-footer"><span>Thanks for reading.</span><a href="/blog/">Back to the blog <span aria-hidden="true">→</span></a></footer>
+    </article>
+  </main>
+</SiteLayout>

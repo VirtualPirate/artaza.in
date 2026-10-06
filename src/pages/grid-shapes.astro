@@ -1,0 +1,39 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { profile, homeLinks } from '../data/portfolio';
+import '../styles/shapes.css';
+const shapes = [
+  { id: 'hexagons', name: 'Hexagons', label: 'hexagon', description: 'A connected honeycomb with room for your tech logos.' },
+  { id: 'diamonds', name: 'Diamonds', label: 'diamond', description: 'A sharp diagonal lattice with lifted edges.' },
+  { id: 'triangles', name: 'Triangles', label: 'triangle', description: 'Alternating facets for a crystalline texture.' },
+  { id: 'circles', name: 'Circles', label: 'circle', description: 'Glowing discs with a little breathing room.' },
+  { id: 'capsules', name: 'Capsules', label: 'capsule', description: 'Staggered rounded tiles with a server-rack feel.' },
+  { id: 'cubes', name: 'Isometric cubes', label: 'isometric cube', description: 'Three-sided blocks for a more sculptural backdrop.' },
+];
+---
+<SiteLayout title={`Grid shape demos — ${profile.name}`} description="Try six interactive grid shapes and preview them behind the portfolio layout." bare interactive noindex>
+  <header class="shell"><a class="brand" href="/">{profile.brand}.</a><a class="back" href="/">Back to portfolio</a></header>
+  <main class="shell" id="main">
+    <div class="intro"><h1>Grid shape demos.</h1><p>Hover or tap a panel to try a shape. Open its homepage preview to see the glow and colored logos behind your content.</p></div>
+    <noscript><p>The interactive shape previews need JavaScript. <a href="/">Return to the portfolio.</a></p></noscript>
+    <div class="gallery">
+      {shapes.map(shape => <section class="demo" data-shape={shape.id}><svg class="scene" role="img" aria-label={`Interactive ${shape.label} grid. Move your cursor or tap to highlight tiles.`} tabindex="0"></svg><div class="caption"><h2>{shape.name}</h2><p>{shape.description}</p><button class="preview" type="button">Preview {shape.id}</button></div></section>)}
+    </div>
+  </main>
+  <footer class="shell">Choose a shape by name. Each preview uses the same white outlines and sparse colored logos.</footer>
+  <dialog aria-labelledby="preview-title">
+    <div class="dialog-heading"><h2 id="preview-title">Homepage preview</h2><button class="close" type="button" autofocus>Close preview</button></div>
+    <div class="homepage">
+      <svg class="scene" role="img" aria-label="Interactive homepage grid preview. Move your cursor or tap to highlight tiles." tabindex="0"></svg>
+      <div class="sample">
+        <div class="sample-nav"><span class="brand">{profile.brand}.</span><span>Home Blog Work</span></div>
+        <p class="hello">Hello, I’m</p><h2 class="sample-name">{profile.name}.</h2>
+        <p class="sample-role">{profile.tagline}</p><p class="sample-bio">{profile.bio[0]}<br />{profile.bio[1]}</p>
+        <div class="sample-links">{profile.socials.map(link => <span>{link.label} ↗</span>)}</div>
+        <span class="sample-resume">Download resume ↓</span>
+        <div class="sample-pages">{homeLinks.map(link => <div><h2>{link.title}</h2><p>{link.description}</p></div>)}</div>
+      </div>
+    </div>
+  </dialog>
+<script>import '../scripts/grid.js'; import '../scripts/shapes.js';</script>
+</SiteLayout>

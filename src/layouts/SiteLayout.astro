@@ -1,0 +1,83 @@
+---
+import '../styles/styles.css';
+import '../styles/grid.css';
+import TechSymbols from '../components/TechSymbols.astro';
+import { profile } from '../data/portfolio';
+import socialImage from '../assets/social.png';
+
+interface Props {
+  title: string;
+  description: string;
+  active?: 'Home' | 'Blog' | 'Work';
+  bodyClass?: string;
+  interactive?: boolean;
+  bare?: boolean;
+  noindex?: boolean;
+  article?: { title: string; date: string };
+  breadcrumbs?: { name: string; href: string }[];
+}
+const { title, description, active, bodyClass, interactive = false, bare = false, noindex = false, article, breadcrumbs = [] } = Astro.props;
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site).href;
+const imageUrl = new URL(socialImage.src, site).href;
+const person = { '@type': 'Person', '@id': new URL('/#person', site).href, name: profile.name, url: site.href, jobTitle: profile.role };
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    person,
+    { '@type': 'WebSite', '@id': new URL('/#website', site).href, url: site.href, name: `${profile.name} — ${profile.role}`, inLanguage: 'en', author: { '@id': person['@id'] } },
+    { '@type': article ? 'BlogPosting' : 'WebPage', '@id': canonical, url: canonical, name: title, description, inLanguage: 'en', isPartOf: { '@id': new URL('/#website', site).href }, ...(article ? { headline: article.title, datePublished: article.date, author: { '@id': person['@id'] }, image: imageUrl, mainEntityOfPage: canonical } : {}) },
+    ...(breadcrumbs.length ? [{ '@type': 'BreadcrumbList', itemListElement: breadcrumbs.map((crumb, index) => ({ '@type': 'ListItem', position: index + 1, name: crumb.name, item: new URL(crumb.href, site).href })) }] : []),
+  ],
+};
+const navigation = [{ label: 'Home', href: '/' }, { label: 'Blog', href: '/blog/' }, { label: 'Work', href: '/work/' }];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#000000" />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${profile.name} — ${profile.role}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={`${profile.name} — ${profile.role}`} />
+    {article && <meta property="article:published_time" content={article.date} />}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\u003c')} />
+    <slot name="head" />
+  </head>
+  <body class:list={['grid-page', bodyClass]}>
+    {interactive && <><TechSymbols /><div class="background-grid" aria-hidden="true"></div></>}
+    <a class="skip-link" href="#main">Skip to content</a>
+    {!bare && (
+      <header class="site-header shell">
+        <a class="brand" href="/" aria-label={`${profile.name} home`}>{profile.brand}<span>.</span></a>
+        <nav class="site-nav" aria-label="Main navigation">
+          {navigation.map(link => <a href={link.href} aria-current={active === link.label ? 'page' : undefined}>{link.label}</a>)}
+        </nav>
+      </header>
+    )}
+    <slot />
+    {!bare && (
+      <footer class="site-footer shell"><span>{profile.name}</span><a href={`mailto:${profile.email}`}>Say hello <span aria-hidden="true">↗</span></a></footer>
+    )}
+  </body>
+</html>

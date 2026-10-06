@@ -1,0 +1,61 @@
+Artaza Sameen
+Backend Engineer | Finlens
+Kolkata, West Bengal, India
+artaza.developer@gmail.com | +91 7630033481
+https://artaza.in
+https://github.com/VirtualPirate
+https://www.linkedin.com/in/artaza-sameen-4b995b23a/
+
+PROFILE
+Self-taught programmer who started at 14, with over three years of production
+experience building SaaS products, fintech pipelines, and AI automation.
+Focused on data modeling, async processing, and reliable API design.
+
+EXPERIENCE
+Finlens — SDE 2, Backend — March 2025 to Present
+- Migrated infrastructure from AWS to GCP.
+- Built accountant dashboards, role-based access for firm employees,
+  and accountant task management.
+
+Finlens — Full Stack Developer — July 2023 to March 2025
+- Built bank integrations and AI categorization for financial transactions.
+- Integrated Stripe payments and revenue recognition accounting.
+- Migrated ExpressJS to NestJS; implemented Docker and GitHub Actions CI/CD.
+- Optimized APIs for financial report generation.
+
+Stock Register — Frontend Web Developer Intern — March 2023 to July 2023
+- Launched an inventory management web app with real-time asset visibility.
+- Improved lists, filtering, and data fetching with React and TanStack Query.
+- Standardized state management for complex workflows.
+
+TECHNICAL FOCUS
+Multi-tenant financial integrations with Stripe, Plaid, and QuickBooks.
+Background jobs, webhook ingestion, retry logic, and distributed queues.
+AI voice orchestration, call scheduling, concurrent call limits, usage-based
+pricing, and post-call analysis with OpenAI structured outputs and Langfuse.
+
+SKILLS
+Backend: TypeScript, NestJS, TypeORM, Zod, Jest, Python, FastAPI, SQLAlchemy,
+Alembic, Pydantic, PostgreSQL, MongoDB, Rust.
+Infrastructure: Docker, AWS ECR, GCP Cloud Run, GitHub Actions, Redis,
+RabbitMQ, BullMQ, Celery.
+Frontend: React, Next.js, Svelte, JavaScript, Tailwind CSS.
+
+SELECTED PROJECTS
+OpenGraph Viewer — React web app for inspecting website Open Graph metadata.
+https://github.com/VirtualPirate/OpenGraph-Viewer
+OpenGraph API — Node.js API for fetching Open Graph metadata from a URL.
+https://github.com/VirtualPirate/OpenGraph-API
+AZCreation Studio — Animated Next.js and TypeScript client portfolio.
+https://github.com/VirtualPirate/azcreation
+Algebra API — JavaScript and C++ service for step-by-step algebra simplification.
+https://github.com/VirtualPirate/Algebra-API
+
+OPEN SOURCE
+Contributor to the Rust ecosystem.
+https://github.com/search?q=is%3Apr+author%3AVirtualPirate&type=pullrequests
+
+EDUCATION
+Maulana Mazharul Haque Arabic & Persian University, Patna
+Bachelor of Technology (BTech), Information Technology
+December 2022 to December 2025

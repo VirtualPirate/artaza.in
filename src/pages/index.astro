@@ -1,0 +1,22 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { profile, homeLinks } from '../data/portfolio';
+---
+<SiteLayout title={`${profile.name} — ${profile.role}`} description={profile.description} active="Home" interactive>
+  <main class="shell home" id="main">
+    <div class="intro">
+      <p class="hello">Hello, I’m</p>
+      <h1>{profile.name}<span class="period">.</span></h1>
+      <p class="role">{profile.tagline}</p>
+      <p class="bio">{profile.bio[0]}<br /> {profile.bio[1]}</p>
+      <div class="social-links" aria-label="Find me elsewhere">
+        {profile.socials.map(link => <a href={link.href} target={link.href.startsWith('https://') ? '_blank' : undefined} rel={link.href.startsWith('https://') ? 'noopener noreferrer' : undefined}>{link.label} <span aria-hidden="true">↗</span></a>)}
+      </div>
+      <a class="resume-button" href={profile.resume} download>Download resume <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="home-links">
+      {homeLinks.map(link => <a class="home-link" href={link.href}><div><h2>{link.title}</h2><p>{link.description}</p></div><span class="link-arrow" aria-hidden="true">↗</span></a>)}
+    </div>
+  </main>
+<script>import '../scripts/grid.js';</script>
+</SiteLayout>
