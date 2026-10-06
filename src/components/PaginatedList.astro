@@ -1,0 +1,23 @@
+---
+import type { Tag } from '../data/portfolio';
+interface Props { label: 'projects' | 'articles'; tags?: Tag[] }
+const { label, tags = [] } = Astro.props;
+---
+<div class="paginated-list" data-page-size="4" data-item-label={label}>
+  {tags.length > 0 && <div class="project-filters" data-filter-controls hidden>
+    <label>
+      <span>Filter by tag</span>
+      <select data-tag-filter>
+        <option value="" selected>All tags</option>
+        {tags.map(tag => <option value={tag.label}>{tag.label}</option>)}
+      </select>
+    </label>
+  </div>}
+  <slot />
+  <nav class="pagination" aria-label={`${label === 'projects' ? 'Projects' : 'Blog'} pagination`} hidden>
+    <button type="button" data-previous>Previous</button>
+    <span data-pagination-status role="status" aria-atomic="true"></span>
+    <button type="button" data-next>Next</button>
+  </nav>
+</div>
+<script>import '../scripts/lists.js';</script>

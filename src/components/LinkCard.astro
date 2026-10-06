@@ -1,19 +1,23 @@
 ---
 import Tags from './Tags.astro';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Icon from './Icon.astro';
 import type { Tag } from '../data/portfolio';
 interface Props {
-  title: string; logo: string; description: string; tags: Tag[];
+  title: string; logo: string; logoImage?: ImageMetadata; description: string; tags: Tag[];
   href: string; urlLabel: string; icon: 'github' | 'browser';
+  links?: { label: string; href: string }[];
 }
-const { title, logo, description, tags, href, urlLabel, icon } = Astro.props;
+const { title, logo, logoImage, description, tags, href, urlLabel, icon, links } = Astro.props;
+const Card = links ? 'article' : 'a';
 const external = href.startsWith('https://');
 ---
-<a class="work-card" href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+<Card class="work-card" data-tags={JSON.stringify(tags.map(tag => tag.label))} href={links ? undefined : href} target={!links && external ? '_blank' : undefined} rel={!links && external ? 'noopener noreferrer' : undefined}>
   <div class="card-heading">
-    <span class="card-logo" aria-hidden="true">{logo}</span>
-    <div><h3>{title}</h3><Tags tags={tags} /></div>
+    <span class="card-logo" aria-hidden="true">{logoImage ? <Image src={logoImage} alt={`${title} logo`} width={48} height={48} widths={[48, 96]} sizes="48px" format="webp" loading="lazy" /> : logo}</span>
+    <div><h3>{links ? <a class="card-detail" href={href}>{title}</a> : title}</h3><Tags tags={tags} /></div>
   </div>
   <p class="card-description">{description}</p>
-  <span class="card-url"><Icon name={icon} /><span class="url-text">{urlLabel}</span><span class="link-arrow" aria-hidden="true">{external ? '↗' : '→'}</span></span>
-</a>
+  {links ? <div class="card-links">{links.map(link => <a class="card-url" href={link.href} target="_blank" rel="noopener noreferrer"><Icon name={link.href.startsWith('https://github.com/') ? 'github' : 'browser'} /><span class="url-text">{link.label}</span><span class="link-arrow" aria-hidden="true">↗</span></a>)}</div> : <span class="card-url"><Icon name={icon} /><span class="url-text">{urlLabel}</span><span class="link-arrow" aria-hidden="true">{external ? '↗' : '→'}</span></span>}
+</Card>

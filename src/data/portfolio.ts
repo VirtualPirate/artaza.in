@@ -1,7 +1,15 @@
-import viewerImage from '../assets/projects/opengraph-viewer.jpg';
-import apiImage from '../assets/projects/opengraph-api.jpg';
-import studioImage from '../assets/projects/az-creation.png';
+import launchstackImage from '../assets/projects/launchstack.png';
+import launchstackLogo from '../assets/projects/launchstack-logo.png';
+import devsummaryImage from '../assets/projects/devsummary-desktop.png';
+import devsummaryLogo from '../assets/projects/devsummary-logo.png';
+import papersflyImage from '../assets/projects/papersfly.jpg';
+import papersflyLogo from '../assets/projects/papersfly-logo.png';
+import commandKingImage from '../assets/projects/command-king.png';
+import commandKingLogo from '../assets/projects/command-king-logo.png';
 import algebraImage from '../assets/projects/algebra-api.jpg';
+import finlensLogo from '../assets/companies/finlens-logo.jpg';
+import stockRegisterLogo from '../assets/companies/stock-register-logo.jpg';
+import tauriLogo from '../assets/contributions/tauri-logo.png';
 
 // Profile and experience: LinkedIn. Projects and contact details: artaza.in.
 export const profile = {
@@ -9,7 +17,7 @@ export const profile = {
   brand: 'artaza',
   role: 'Backend engineer',
   tagline: 'Backend engineer. Systems, data & AI.',
-  bio: ['I build fintech pipelines, reliable APIs, and AI automation.', 'Based in Kolkata, building at Finlens and contributing to Rust.'],
+  bio: ['I build fintech pipelines, reliable APIs, and AI automation,', 'building at Finlens (YC W20) and open source contributor at the Rust Ecosystem.'],
   description: 'Artaza Sameen, a backend engineer at Finlens based in Kolkata. Explore fintech systems, AI automation, side projects, Rust contributions, and writing.',
   email: 'artaza.developer@gmail.com',
   resume: '/resume.txt',
@@ -29,9 +37,9 @@ export const homeLinks = [
 export type Tag = { label: string; color: 'blue' | 'purple' | 'green' | 'yellow' | 'orange' };
 
 export const experience = [
-  { company: 'Finlens', logo: 'F', role: 'SDE 2 — Backend', start: '2025-03', startLabel: 'Mar 2025', end: null, endLabel: 'Present', description: 'Migrated infrastructure from AWS to GCP. Built accountant dashboards, role-based access for firm employees, and accountant task management.' },
-  { company: 'Finlens', logo: 'F', role: 'Full Stack Developer', start: '2023-07', startLabel: 'Jul 2023', end: '2025-03', endLabel: 'Mar 2025', description: 'Built bank integrations, AI transaction categorization, Stripe payments and revenue recognition, and fast financial reporting APIs. Migrated Express to NestJS and set up CI/CD with Docker and GitHub Actions.' },
-  { company: 'Stock Register', logo: 'SR', role: 'Frontend Web Developer · Internship', start: '2023-03', startLabel: 'Mar 2023', end: '2023-07', endLabel: 'Jul 2023', description: 'Launched an inventory management web app with real-time asset visibility. Used React and TanStack Query for responsive lists and filtering, and standardized state management across complex workflows.' },
+  { company: 'Finlens', logoImage: finlensLogo, role: 'SDE 2 — Backend', start: '2025-03', startLabel: 'Mar 2025', end: null, endLabel: 'Present', description: 'Migrated infrastructure from AWS to GCP. Built accountant dashboards, role-based access for firm employees, and accountant task management.' },
+  { company: 'Finlens', logoImage: finlensLogo, role: 'Full Stack Developer', start: '2023-07', startLabel: 'Jul 2023', end: '2025-03', endLabel: 'Mar 2025', description: 'Built bank integrations, AI transaction categorization, Stripe payments and revenue recognition, and fast financial reporting APIs. Migrated Express to NestJS and set up CI/CD with Docker and GitHub Actions.' },
+  { company: 'Stock Register', logoImage: stockRegisterLogo, role: 'Frontend Web Developer · Internship', start: '2023-03', startLabel: 'Mar 2023', end: '2023-07', endLabel: 'Jul 2023', description: 'Launched an inventory management web app with real-time asset visibility. Used React and TanStack Query for responsive lists and filtering, and standardized state management across complex workflows.' },
 ];
 
 export const about = 'I’m a self-taught programmer who started at 14. Today, I have over three years of production experience building SaaS products, multi-tenant fintech systems, and AI automation. My work spans data modeling, background jobs, and reliable API design in TypeScript and Python.';
@@ -52,34 +60,53 @@ export const education = {
 
 export const projects = [
   {
-    slug: 'opengraph-viewer', title: 'OpenGraph Viewer', logo: 'OG', theme: 'opengraph',
-    tags: [{ label: 'Web app', color: 'blue' }, { label: 'Developer tool', color: 'purple' }] as Tag[],
-    detailTags: [{ label: 'Web app', color: 'blue' }, { label: 'React', color: 'purple' }] as Tag[],
-    description: 'Preview a link’s Open Graph card before sharing it.',
-    summary: 'A React web app for inspecting a website’s Open Graph metadata. Enter a URL to see its title, description, and preview image using the companion OpenGraph API.',
-    urlLabel: 'opengraph-viewer.netlify.app', icon: 'browser' as const,
-    links: [{ label: 'Visit website', href: 'https://opengraph-viewer.netlify.app/' }, { label: 'Source code', href: 'https://github.com/VirtualPirate/OpenGraph-Viewer' }, { label: 'Explore the API', href: '/projects/opengraph-api/' }],
-    image: viewerImage, imageAlt: 'OpenGraph Viewer interface with a wordmark, URL input, and Check Website button.', imageCaption: 'The OpenGraph Viewer link preview interface.',
+    slug: 'launchstack', title: 'LaunchStack', logo: 'LS', logoImage: launchstackLogo, theme: 'launchstack',
+    tags: [{ label: 'SaaS starter', color: 'green' }, { label: 'TypeScript', color: 'blue' }] as Tag[],
+    detailTags: [{ label: 'NestJS', color: 'purple' }, { label: 'React', color: 'blue' }, { label: 'PostgreSQL', color: 'blue' }, { label: 'Kysely', color: 'green' }] as Tag[],
+    description: 'A full-stack TypeScript SaaS starter with auth, organizations, roles, and email built in.',
+    summary: 'A full-stack TypeScript template for building multi-tenant SaaS products. Includes email and Google sign-in, email verification, organizations, role-based access, member invitations, and transactional email. Built with NestJS, React, PostgreSQL, Kysely, and Better Auth, with shared API types and validation.',
+    urlLabel: 'github.com/VirtualPirate/launchstack', icon: 'github' as const,
+    links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/launchstack' }, { label: 'Documentation', href: 'https://github.com/VirtualPirate/launchstack#readme' }],
+    image: launchstackImage, imageAlt: 'LaunchStack dashboard with sidebar navigation and organization controls.', imageCaption: 'LaunchStack’s dashboard from the project repository.',
   },
   {
-    slug: 'opengraph-api', title: 'OpenGraph API', logo: '</>', theme: 'opengraph',
-    tags: [{ label: 'API', color: 'green' }, { label: 'JavaScript', color: 'yellow' }] as Tag[],
-    detailTags: [{ label: 'API', color: 'green' }, { label: 'JavaScript', color: 'yellow' }, { label: 'MongoDB', color: 'green' }] as Tag[],
-    description: 'Fetch link metadata through the API that powers OpenGraph Viewer.',
-    summary: 'A Node.js API that fetches Open Graph metadata from a URL. It returns the site name, title, description, URL, and image as structured data and powers OpenGraph Viewer.',
-    urlLabel: 'github.com/VirtualPirate/OpenGraph-API', icon: 'github' as const,
-    links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/OpenGraph-API' }, { label: 'Documentation', href: 'https://github.com/VirtualPirate/OpenGraph-API#readme' }, { label: 'Open the viewer', href: '/projects/opengraph-viewer/' }],
-    image: apiImage, imageAlt: 'OpenGraph API documentation showing a GET endpoint, URL parameter, and JavaScript request.', imageCaption: 'OpenGraph API endpoint documentation and a JavaScript request.',
+    slug: 'devsummary-desktop', title: 'DevSummary Desktop', logo: 'DS', logoImage: devsummaryLogo, theme: 'devsummary',
+    tags: [{ label: 'Desktop app', color: 'blue' }, { label: 'AI', color: 'purple' }] as Tag[],
+    detailTags: [{ label: 'Electron', color: 'blue' }, { label: 'NestJS', color: 'purple' }, { label: 'React', color: 'blue' }, { label: 'PGlite', color: 'green' }] as Tag[],
+    description: 'An AI-powered Git reporting app for founders and managers.',
+    summary: 'An AI-powered Git reporting app for founders and managers. DevSummary tracks selected GitHub branches, classifies commits, and generates scheduled or on-demand briefs for projects, teams, and repositories. Built with Electron, NestJS, React, and PGlite, with the database and credentials stored on your computer.',
+    urlLabel: 'github.com/VirtualPirate/devsummary-desktop', icon: 'github' as const,
+    links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/devsummary-desktop' }, { label: 'Visit desktop website', href: 'https://devsummary.com/desktop' }],
+    image: devsummaryImage, imageAlt: 'DevSummary dashboard preview showing code changes, commit volume, work categories, and activity charts.', imageCaption: 'DevSummary’s dashboard preview from the project repository.',
   },
   {
-    slug: 'az-creation', title: 'AZCreation Studio', logo: 'AZ', theme: 'az',
-    tags: [{ label: 'Website', color: 'blue' }, { label: 'Next.js', color: 'purple' }] as Tag[],
-    detailTags: [{ label: 'Website', color: 'blue' }, { label: 'Next.js', color: 'purple' }, { label: 'TypeScript', color: 'blue' }] as Tag[],
-    description: 'An animated client portfolio with a custom gallery, built with Next.js and TypeScript.',
-    summary: 'A portfolio for AZCreation Studio, built with Next.js and TypeScript. The design pairs an animated presentation with a custom gallery to showcase the client’s work across devices.',
-    urlLabel: 'azcreation.pages.dev', icon: 'browser' as const,
-    links: [{ label: 'Visit website', href: 'https://azcreation.pages.dev/' }, { label: 'Source code', href: 'https://github.com/VirtualPirate/azcreation' }],
-    image: studioImage, imageAlt: 'AZCreation Studio homepage using a green and black palette, portrait, and introduction.', imageCaption: 'AZCreation Studio’s homepage and visual identity.',
+    slug: 'devsummary', title: 'DevSummary', logo: 'DS', logoImage: devsummaryLogo, theme: 'devsummary',
+    tags: [{ label: 'Web app', color: 'blue' }, { label: 'AI', color: 'purple' }, { label: 'Private repo', color: 'yellow' }] as Tag[],
+    detailTags: [{ label: 'Web app', color: 'blue' }, { label: 'AI', color: 'purple' }] as Tag[],
+    description: 'An AI-powered Git reporting app for founders and managers.',
+    summary: 'The web app version of DevSummary, an AI-powered Git reporting app for founders and managers. Its source repository is private.',
+    urlLabel: 'devsummary.com', icon: 'browser' as const,
+    links: [{ label: 'Visit web app', href: 'https://devsummary.com' }],
+  },
+  {
+    slug: 'papersfly', title: 'papersfly', logo: 'PF', logoImage: papersflyLogo, theme: 'papersfly',
+    tags: [{ label: 'Web app', color: 'blue' }, { label: 'PDF builder', color: 'green' }] as Tag[],
+    detailTags: [{ label: 'Astro', color: 'orange' }, { label: 'React', color: 'blue' }, { label: 'TypeScript', color: 'blue' }, { label: 'jsPDF', color: 'green' }] as Tag[],
+    description: 'Create resumes, invoices, and cover letters with live previews and vector PDF exports.',
+    summary: 'A browser-based document builder for resumes, invoices, and cover letters. Choose a template, edit your content alongside a live preview, and export a PDF with selectable text and embedded fonts. Document editing and PDF generation run on your device, with no account required.',
+    urlLabel: 'papersfly.com', icon: 'browser' as const,
+    links: [{ label: 'Visit website', href: 'https://papersfly.com' }, { label: 'Source code', href: 'https://github.com/VirtualPirate/papersfly' }],
+    image: papersflyImage, imageAlt: 'Papersfly’s Classic resume editor with a content form, live document preview, and Download PDF button.', imageCaption: 'The live Classic resume editor, shown with Papersfly’s sample content.',
+  },
+  {
+    slug: 'command-king', title: 'Command King', logo: 'CK', logoImage: commandKingLogo, theme: 'command-king',
+    tags: [{ label: 'VS Code extension', color: 'blue' }, { label: 'Developer tool', color: 'purple' }] as Tag[],
+    detailTags: [{ label: 'VS Code', color: 'blue' }, { label: 'TypeScript', color: 'blue' }, { label: 'Developer tool', color: 'purple' }] as Tag[],
+    description: 'Organize workspace commands and npm scripts in VS Code, then run them in the terminal.',
+    summary: 'A VS Code extension that discovers custom commands in .cmdk files and npm scripts in package.json. Organize commands in a nested tree, add descriptions, and run them in the integrated terminal. Create, edit, or delete custom commands from the sidebar, with file changes reflected automatically.',
+    urlLabel: 'github.com/VirtualPirate/command-king', icon: 'github' as const,
+    links: [{ label: 'Source code', href: 'https://github.com/VirtualPirate/command-king' }, { label: 'Documentation', href: 'https://github.com/VirtualPirate/command-king#readme' }],
+    image: commandKingImage, imageAlt: 'Command King running in VS Code with a workspace command tree, a .cmdk configuration, and an integrated terminal.', imageCaption: 'A frame from Command King’s repository demo.',
   },
   {
     slug: 'algebra-api', title: 'Algebra API', logo: 'ƒx', theme: 'algebra',
@@ -94,7 +121,19 @@ export const projects = [
 ];
 
 export const contributions = [
-  { title: 'Rust ecosystem', logo: 'Rs', tags: [{ label: 'Open source', color: 'green' }, { label: 'Rust', color: 'orange' }] as Tag[], description: 'I contribute to the open-source Rust ecosystem. Explore my public pull requests on GitHub.', href: 'https://github.com/search?q=is%3Apr+author%3AVirtualPirate&type=pullrequests', urlLabel: 'GitHub · Public pull requests', icon: 'github' as const },
+  {
+    title: 'Tauri — Upload Plugin', logo: 'T', logoImage: tauriLogo,
+    tags: [{ label: 'Rust', color: 'orange' }, { label: 'TypeScript', color: 'blue' }, { label: 'Merged', color: 'green' }] as Tag[],
+    description: 'Added upload and download speed reporting to Tauri’s official file-transfer plugin. Built Rust transfer tracking and exposed transferSpeed in TypeScript progress callbacks, letting apps display transfer rates without relying on JavaScript timers. Merged November 4, 2024.',
+    href: 'https://github.com/tauri-apps/plugins-workspace/pull/1797', urlLabel: 'tauri-apps/plugins-workspace · PR #1797', icon: 'github' as const,
+  },
+  {
+    title: 'ffmpeg-sidecar', logo: 'FF',
+    tags: [{ label: 'Rust', color: 'orange' }, { label: 'FFmpeg', color: 'yellow' }, { label: '2 merged PRs', color: 'green' }] as Tag[],
+    description: 'Made FFmpeg setup more self-contained in this Rust library. Replaced command-line curl with reqwest downloads and added the download_ffmpeg feature (#48). Replaced the external tar command with Rust archive extraction for Linux, Windows, and macOS (#51). Both PRs merged in October 2024.',
+    href: 'https://github.com/nathanbabcock/ffmpeg-sidecar', urlLabel: 'nathanbabcock/ffmpeg-sidecar', icon: 'github' as const,
+    links: [{ label: 'PR #48 · reqwest downloads', href: 'https://github.com/nathanbabcock/ffmpeg-sidecar/pull/48' }, { label: 'PR #51 · Rust archive extraction', href: 'https://github.com/nathanbabcock/ffmpeg-sidecar/pull/51' }],
+  },
 ];
 
 export const repositoryLink = 'https://github.com/VirtualPirate?tab=repositories';

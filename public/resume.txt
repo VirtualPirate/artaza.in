@@ -42,12 +42,6 @@ RabbitMQ, BullMQ, Celery.
 Frontend: React, Next.js, Svelte, JavaScript, Tailwind CSS.
 
 SELECTED PROJECTS
-OpenGraph Viewer — React web app for inspecting website Open Graph metadata.
-https://github.com/VirtualPirate/OpenGraph-Viewer
-OpenGraph API — Node.js API for fetching Open Graph metadata from a URL.
-https://github.com/VirtualPirate/OpenGraph-API
-AZCreation Studio — Animated Next.js and TypeScript client portfolio.
-https://github.com/VirtualPirate/azcreation
 Algebra API — JavaScript and C++ service for step-by-step algebra simplification.
 https://github.com/VirtualPirate/Algebra-API
 

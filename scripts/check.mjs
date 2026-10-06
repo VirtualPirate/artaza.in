@@ -23,6 +23,37 @@ assert.match(read('dist/resume.txt'), /Finlens — SDE 2, Backend/);
 for (const detail of ['Stock Register', 'id="skills-heading"', 'FastAPI', 'Education', 'Maulana Mazharul Haque']) assert.ok(read('dist/work/index.html').includes(detail), `Work page includes ${detail}`);
 assert.match(read('dist/blog/index.html'), /Read on LinkedIn/);
 for (const [slug, date] of [['download-instagram-reels-by-scraping-using-nodejs', '2023-05-12'], ['how-to-use-prismjs-in-react-js', '2023-01-14']]) assert.ok(read(`dist/blog/${slug}/index.html`).includes(`datetime="${date}"`), `${slug}: original publication date and URL`);
+const projectCards = [...read('dist/work/index.html').matchAll(/<article class="work-card"[^>]*>[\s\S]*?<\/article>|<a class="work-card"[^>]*>[\s\S]*?<\/a>/g)].map(match => match[0]);
+for (const [slug, title] of [['devsummary-desktop', 'DevSummary Desktop'], ['devsummary', 'DevSummary'], ['papersfly', 'papersfly'], ['command-king', 'Command King'], ['launchstack', 'LaunchStack']]) {
+  const card = projectCards.find(card => card.includes(`href="/projects/${slug}/"`));
+  assert.ok(card, `${slug}: project card links to detail page`);
+  assert.ok(card.includes(title) && card.includes(`alt="${title} logo"`), `${slug}: title and original logo on card`);
+  const detail = read(`dist/projects/${slug}/index.html`);
+  assert.ok(detail.includes(`alt="${title} logo"`), `${slug}: logo on detail page`);
+  if (slug !== 'devsummary') {
+    assert.ok(detail.includes(`https://github.com/VirtualPirate/${slug}`), `${slug}: source repository`);
+    assert.ok(detail.includes('class="project-image"'), `${slug}: screenshot on detail page`);
+  }
+  if (slug === 'papersfly') {
+    assert.equal((card.match(/class="card-url"/g) || []).length, 2, 'Papersfly card has website and source links');
+    for (const href of ['https://papersfly.com', 'https://github.com/VirtualPirate/papersfly']) {
+      assert.ok(card.includes(`href="${href}"`) && detail.includes(`href="${href}"`), `Papersfly: ${href} on card and detail page`);
+    }
+  }
+  if (slug.startsWith('devsummary')) {
+    assert.ok(card.includes('An AI-powered Git reporting app for founders and managers.'), `${slug}: requested card description`);
+    const links = slug === 'devsummary-desktop' ? ['https://github.com/VirtualPirate/devsummary-desktop', 'https://devsummary.com/desktop'] : ['https://devsummary.com'];
+    assert.match(card, /^<article\b/, `${slug}: independent links without nested anchors`);
+    assert.equal((card.match(/class="card-url"/g) || []).length, links.length, `${slug}: expected number of card links`);
+    for (const href of links) {
+      assert.ok(card.includes(`href="${href}"`) && detail.includes(`href="${href}"`), `${slug}: ${href} on card and detail page`);
+    }
+    if (slug === 'devsummary') {
+      assert.ok(card.includes('Private repo'), 'Web app card identifies its private repository');
+      assert.doesNotMatch(card + detail, /href="https:\/\/github\.com\//, 'Web app has no public repository link');
+    }
+  }
+}
 const titles = new Set();
 const canonicals = new Set();
 const sitemap = read('dist/sitemap.xml');
@@ -55,7 +86,7 @@ for (const name of pages) {
     assert.equal((html.match(/aria-current="page"/g) || []).length, 1, `${name}: active navigation`);
   }
   if (name.startsWith('blog/') || name.startsWith('blog-post/')) {
-    assert.equal((html.match(/<script\b/g) || []).length, 1, `${name}: JSON-LD only, no client JavaScript`);
+    assert.equal((html.match(/<script\b/g) || []).length, name === 'blog/index.html' ? 2 : 1, `${name}: only the blog listing needs client pagination`);
     assert.ok(!html.includes('class="background-grid"'), `${name}: static blog background`);
   }
   for (const [, path] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
@@ -125,6 +156,68 @@ location.hash = '#side-products'; events.hashchange(); selected(1);
 location.hash = '#experience'; events.popstate(); selected(0);
 location.hash = '#unknown'; events.hashchange(); selected(0);
 tabs[0].events.keydown({ key: 'Tab', preventDefault() { assert.fail('Tab must keep its native behavior'); } });
+
+{
+  assert.doesNotMatch(work + read('dist/sitemap.xml') + read('dist/resume.txt'), /opengraph-viewer|opengraph-api|AZCreation|az-creation/i, 'Removed projects must stay out of listings, sitemap, and résumé');
+  for (const slug of ['opengraph-viewer', 'opengraph-api', 'az-creation']) assert.ok(!pages.includes('projects/' + slug + '/index.html'));
+  function listing(html, markup, label) {
+    const cards = markup.map((card, index) => Object.assign(element(String(index)), {
+      dataset: { tags: (card.match(/data-tags="([^"]+)"/)?.[1] || '[]').replace(/&(?:quot|#34);/g, '"') },
+    }));
+    const filter = html.includes('<select data-tag-filter>') ? Object.assign(element('tag-filter'), { value: '' }) : null;
+    const controls = { hidden: true }, pagination = { hidden: true }, status = {};
+    const previous = element('previous'), next = element('next');
+    return {
+      dataset: { pageSize: html.match(/data-page-size="(\d+)"/)[1], itemLabel: label },
+      cards, filter, controls, pagination, status, previous, next,
+      querySelector(selector) { return { '[data-list-items]': { children: cards }, '[data-previous]': previous, '[data-next]': next, '[data-pagination-status]': status, '[data-tag-filter]': filter, '[data-filter-controls]': filter ? controls : null, '.pagination': pagination }[selector]; },
+    };
+  }
+  const projects = listing(work, projectCards.filter(card => /href="\/projects\//.test(card)), 'projects');
+  const blogHtml = read('dist/blog/index.html');
+  const articles = [...blogHtml.matchAll(/<a class="work-card blog-entry"[^>]*>[\s\S]*?<\/a>/g)].map(match => match[0]);
+  const blog = listing(blogHtml, articles, 'articles');
+  const longBlog = listing(blogHtml, [...articles, ...articles, ...articles.slice(0, 1)], 'articles');
+  const empty = listing(blogHtml, [], 'articles');
+  assert.match(work, /<option value="" selected>All tags<\/option>/, 'The native tag dropdown defaults to all projects');
+  assert.equal(projects.cards.length, 6);
+  assert.equal(blog.cards.length, 4);
+  assert.ok(projects.cards.every(card => card.hidden === undefined), 'Every card is available before JavaScript runs');
+  runInNewContext(read('src/scripts/lists.js'), { document: { querySelectorAll: () => [projects, blog, longBlog, empty] } });
+  const visible = list => list.cards.filter(card => !card.hidden).map(card => card.id);
+  assert.deepEqual(visible(projects), ['0', '1', '2', '3']);
+  assert.ok(projects.previous.disabled && !projects.next.disabled && !projects.controls.hidden && !projects.pagination.hidden);
+  projects.next.click();
+  assert.deepEqual(visible(projects), ['4', '5']);
+  assert.match(projects.status.textContent, /5–6 of 6 projects · Page 2 of 2/);
+  assert.ok(projects.next.disabled);
+  projects.next.click();
+  assert.deepEqual(visible(projects), ['4', '5'], 'Pagination must stay within its last page');
+  projects.filter.value = 'AI';
+  projects.filter.events.change();
+  assert.deepEqual(visible(projects), ['1', '2'], 'Filtering on page two must reset to page one');
+  assert.equal(projects.filter.value, 'AI');
+  assert.ok(projects.previous.disabled && projects.next.disabled);
+  projects.filter.value = 'API'; projects.filter.events.change();
+  assert.deepEqual(visible(projects), ['5'], 'Tag matching is exact');
+  assert.match(projects.status.textContent, /1–1 of 1 project · Page 1 of 1/);
+  projects.filter.value = ''; projects.filter.events.change();
+  assert.deepEqual(visible(projects), ['0', '1', '2', '3']);
+  projects.next.click(); projects.previous.click();
+  assert.deepEqual(visible(projects), ['0', '1', '2', '3']);
+  assert.equal(visible(blog).length, 4, 'Blog pagination is independent of project filtering');
+  assert.ok(blog.previous.disabled && blog.next.disabled && !blog.pagination.hidden);
+  longBlog.next.click();
+  assert.deepEqual(visible(longBlog), ['4', '5', '6', '7']);
+  longBlog.next.click();
+  assert.deepEqual(visible(longBlog), ['8']);
+  assert.ok(longBlog.next.disabled);
+  longBlog.previous.click();
+  assert.deepEqual(visible(longBlog), ['4', '5', '6', '7']);
+  assert.deepEqual(visible(empty), []);
+  assert.ok(empty.previous.disabled && empty.next.disabled);
+  assert.match(empty.status.textContent, /0–0 of 0 articles · Page 1 of 1/);
+}
 
 const glowScript = read('src/scripts/grid.js').replace(/^import .*?;\n/, '');
 const css = read('src/styles/grid.css');
@@ -353,4 +446,4 @@ svg.events.pointermove({ pointerType: 'mouse', clientX: 200, clientY: 200 });
 svg.focus(); flush(); clear(svg);
 assert.equal(frames.size, 0, 'Reduced motion must ignore pointer and keyboard effects');
 }
-console.log(`Passed: ${pages.length} static pages, links/anchors, SEO/schema/sitemap, responsive images, JS budget, keyboard tabs/history, full-page grid, six shape previews, and touch/reduced-motion behavior.`);
+console.log(`Passed: ${pages.length} static pages, links/anchors, SEO/schema/sitemap, responsive images, JS budget, keyboard tabs/history, project tags and list pagination, full-page grid, six shape previews, and touch/reduced-motion behavior.`);
