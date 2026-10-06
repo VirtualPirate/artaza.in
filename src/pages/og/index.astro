@@ -1,0 +1,57 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import OGCard from '../../components/OGCard.astro';
+import TechSymbols from '../../components/TechSymbols.astro';
+import { projects } from '../../data/portfolio';
+---
+<SiteLayout title="OG image previews — Artaza Sameen" description="Review the website and project sharing cards at 1200 × 630 pixels." bare noindex bodyClass="og-gallery">
+  <TechSymbols />
+  <main id="main" class="og-review">
+    <header class="review-heading">
+      <a href="/" class="review-brand">artaza.</a>
+      <div><h1>Sharing cards</h1><p>One for the website. One for every project.</p></div>
+      <span class="review-size">1200 × 630 px</span>
+    </header>
+    <section aria-labelledby="website-heading" class="review-section">
+      <div class="review-label"><h2 id="website-heading">Website</h2><a href="/og/site/" target="_blank" rel="noopener noreferrer">Open full size <span aria-hidden="true">↗</span></a></div>
+      <div class="review-frame"><OGCard /></div>
+    </section>
+    <section aria-labelledby="projects-heading" class="review-section">
+      <div class="review-label"><h2 id="projects-heading">Projects</h2><span>{projects.length} cards</span></div>
+      <div class="review-projects">
+        {projects.map(project => <article>
+          <div class="review-frame"><OGCard project={project} /></div>
+          <div class="review-label"><h3>{project.title}</h3><a href={`/og/${project.slug}/`} target="_blank" rel="noopener noreferrer">Open full size <span aria-hidden="true">↗</span></a></div>
+        </article>)}
+      </div>
+    </section>
+    <footer class="review-footer">HTML previews for review. Image exports come after the design is approved.</footer>
+  </main>
+</SiteLayout>
+
+<style>
+  .og-review { width: min(100% - 64px, 1240px); margin: 0 auto; padding: 48px 0; }
+  .review-heading { display: flex; align-items: center; gap: 40px; margin-bottom: 48px; }
+  .review-brand { font-size: 24px; font-weight: 600; letter-spacing: -1px; }
+  .review-heading h1 { font-size: 32px; letter-spacing: -1px; }
+  .review-heading p { margin-top: 8px; color: #999; font-size: 14px; }
+  .review-size { margin-left: auto; color: #999; font-size: 13px; white-space: nowrap; }
+  .review-section + .review-section { margin-top: 48px; }
+  .review-label { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-block: 16px; }
+  .review-label h2 { font-size: 18px; letter-spacing: -.3px; }
+  .review-label h3 { font-size: 15px; }
+  .review-label a, .review-label > span { color: #999; font-size: 12px; white-space: nowrap; }
+  .review-label a:hover { color: #fff; }
+  .review-frame { border: 1px solid #333; }
+  .review-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .review-projects > article { min-width: 0; }
+  .review-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #262626; color: #999; font-size: 13px; }
+  @media (max-width: 760px) {
+    .og-review { width: calc(100% - 32px); padding-top: 28px; }
+    .review-heading { align-items: flex-start; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 28px; }
+    .review-heading h1 { font-size: 26px; }
+    .review-heading p { max-width: 24ch; }
+    .review-size { width: 100%; margin-left: 0; }
+    .review-projects { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>

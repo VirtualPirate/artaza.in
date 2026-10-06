@@ -78,7 +78,7 @@ for (const name of pages) {
   assert.ok(schema['@graph'].some(item => item['@type'] === 'Person'));
   const article = name.startsWith('blog/') && name !== 'blog/index.html' || name === 'blog-post/index.html';
   if (article) assert.ok(schema['@graph'].some(item => item['@type'] === 'BlogPosting' && item.datePublished && item.author));
-  if (name === '404.html' || name.startsWith('grid-shapes/')) {
+  if (name === '404.html' || name.startsWith('grid-shapes/') || name.startsWith('og/')) {
     assert.match(html, /content="noindex, follow"/);
     assert.ok(!sitemap.includes(`<loc>${canonical}</loc>`));
   } else {
@@ -105,7 +105,17 @@ for (const name of pages) {
     assert.match(attributes, /srcset="[^"]+"/, `${name}: responsive images`);
   }
 }
-assert.equal((sitemap.match(/<loc>/g) || []).length, pages.length - 2);
+assert.equal((sitemap.match(/<loc>/g) || []).length, pages.filter(name => name !== '404.html' && !name.startsWith('grid-shapes/') && !name.startsWith('og/')).length);
+const ogPreviews = read('dist/og/index.html');
+const projectSlugs = [...read('src/data/portfolio.ts').matchAll(/slug: '([^']+)'/g)].map(match => match[1]);
+assert.equal((ogPreviews.match(/data-og-card=/g) || []).length, projectSlugs.length + 1, 'Review gallery includes the website and every project');
+for (const slug of ['site', ...projectSlugs]) {
+  assert.ok(ogPreviews.includes(`href="/og/${slug}/"`), `${slug}: full-size preview link`);
+  const preview = read(`dist/og/${slug}/index.html`);
+  assert.equal((preview.match(/data-og-card=/g) || []).length, 1, `${slug}: one exportable card`);
+  assert.ok(preview.includes(`data-og-card="${slug}"`), `${slug}: correct card`);
+  assert.doesNotMatch(preview, /<script[^>]*src=/, `${slug}: deterministic preview without client scripts`);
+}
 assert.ok(read('dist/robots.txt').includes(`Sitemap: ${new URL('/sitemap.xml', siteUrl).href}`));
 const jsFiles = readdirSync(new URL('_astro/', dist)).filter(name => name.endsWith('.js'));
 assert.ok(jsFiles.reduce((total, name) => total + statSync(new URL(`_astro/${name}`, dist)).size, 0) < 10000, 'Keep all site JavaScript under 10 KB uncompressed');
@@ -446,4 +456,4 @@ svg.events.pointermove({ pointerType: 'mouse', clientX: 200, clientY: 200 });
 svg.focus(); flush(); clear(svg);
 assert.equal(frames.size, 0, 'Reduced motion must ignore pointer and keyboard effects');
 }
-console.log(`Passed: ${pages.length} static pages, links/anchors, SEO/schema/sitemap, responsive images, JS budget, keyboard tabs/history, project tags and list pagination, full-page grid, six shape previews, and touch/reduced-motion behavior.`);
+console.log(`Passed: ${pages.length} static pages, ${projectSlugs.length + 1} OG previews, links/anchors, SEO/schema/sitemap, responsive images, JS budget, keyboard tabs/history, project tags and list pagination, full-page grid, six shape previews, and touch/reduced-motion behavior.`);

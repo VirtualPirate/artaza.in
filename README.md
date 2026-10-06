@@ -22,6 +22,13 @@ pnpm preview    # Serve the built site locally
 dependencies. Deploy only `dist/` to any static host. Configure that host to serve
 `404.html` for missing pages. The grid-shapes demo lives at `/grid-shapes/`.
 
+Review the website and all six project OG cards at `/og/`. Each card has a
+full-size HTML view at `/og/site/` or `/og/{project-slug}/`, with a fixed
+1200 × 630 canvas. Edit `src/components/OGCard.astro` to adjust the designs;
+project names, descriptions, logos, and tags come from the portfolio data.
+These previews are marked `noindex` and excluded from the sitemap. Image
+export and social metadata updates follow design review.
+
 ## Content
 
 - `src/data/portfolio.ts`: profile, contact/social links, experience, skills,

@@ -1,0 +1,137 @@
+---
+import { Image } from 'astro:assets';
+import { profile, projects } from '../data/portfolio';
+import { technologies } from '../data/technologies.js';
+
+interface Props {
+  project?: (typeof projects)[number];
+  heading?: 'h1' | 'h2';
+}
+const { project, heading: Heading = 'h2' } = Astro.props;
+const logo = project && 'logoImage' in project ? project.logoImage : undefined;
+const slug = project?.slug ?? 'site';
+const isSummary = project?.theme === 'devsummary';
+---
+<div class="og-frame">
+  <article class:list={['og-card', `og-${slug}`]} data-og-card={slug} aria-label={`${project?.title ?? profile.name} sharing card`}>
+    <div class="og-grid" aria-hidden="true"></div>
+    <header class="og-top"><span class="og-brand">{profile.brand}.</span><span>{project ? project.tags[0].label : 'Portfolio'}</span></header>
+    <div class="og-copy">
+      {project ? <>
+        <Heading class="og-title">{project.title}</Heading>
+        <p class="og-description">{project.description}</p>
+        <div class="og-tags">{project.detailTags.slice(0, 3).map(tag => <span>{tag.label}</span>)}</div>
+      </> : <>
+        <Heading class="og-title">{profile.name}.</Heading>
+        <p class="og-description">Backend engineer.<br />Systems, data &amp; AI.</p>
+      </>}
+    </div>
+    {project ? <div class="og-art" aria-hidden="true">
+      <div class="og-product">
+        <div class="og-product-heading">
+          {logo ? <Image src={logo} alt={`${project.title} logo`} width={80} height={80} widths={[80, 160]} sizes="80px" format="webp" loading="eager" /> : <span class="og-math-logo">ƒx</span>}
+          <span>{project.theme === 'launchstack' ? 'Ready to build.' : isSummary ? 'Git activity, made clear.' : project.theme === 'papersfly' ? 'From draft to PDF.' : project.theme === 'command-king' ? 'Your workspace. Your commands.' : 'An expression. A solution.'}</span>
+        </div>
+        {project.theme === 'launchstack' && <div class="og-stack">
+          <div><span class="og-stack-icon">@</span><span>Authentication<small>Email &amp; Google sign-in</small></span><span class="og-check">✓</span></div>
+          <div><span class="og-stack-icon">⌘</span><span>Organizations<small>Members, roles &amp; invitations</small></span><span class="og-check">✓</span></div>
+          <div><span class="og-stack-icon">↗</span><span>Transactional email<small>Built into the starter</small></span><span class="og-check">✓</span></div>
+        </div>}
+        {isSummary && <div class="og-summary-art">
+          <svg viewBox="0 0 360 104" fill="none" aria-hidden="true"><path d="M20 26H122C155 26 147 78 183 78H340M20 78H340M90 26V78" stroke="#555" stroke-width="2"/><g fill="#141414" stroke="#e7e7e7" stroke-width="2"><circle cx="20" cy="26" r="7"/><circle cx="90" cy="26" r="7"/><circle cx="20" cy="78" r="7"/><circle cx="90" cy="78" r="7"/><circle cx="200" cy="78" r="7"/><circle cx="270" cy="78" r="7"/><circle cx="340" cy="78" r="7"/></g></svg>
+          <div class="og-brief"><span class="og-brief-label">Project brief</span><div class="og-brief-line"></div><div class="og-brief-line"></div><div class="og-brief-line"></div><div class="og-bars">{[38, 64, 48, 86, 58, 100, 76].map(height => <span style={`height: ${height}%`}></span>)}</div></div>
+          <span class="og-art-caption">{slug === 'devsummary-desktop' ? 'On your device' : 'On the web'}</span>
+        </div>}
+        {project.theme === 'papersfly' && <div class="og-paper-stack">
+          <div class="og-paper"><span class="og-paper-title">Your next chapter.</span><span class="og-paper-subtitle">Resume</span><div class="og-paper-rule"></div>{Array.from({ length: 8 }, () => <span class="og-paper-line"></span>)}<span class="og-paper-export">PDF ↗</span></div>
+        </div>}
+        {project.theme === 'command-king' && <div class="og-terminal">
+          <div class="og-terminal-top"><span></span><span></span><span></span><span class="og-terminal-name">workspace.cmdk</span></div>
+          <div class="og-command"><span>⌄</span> Workspace commands</div>
+          <div class="og-command og-command-child"><span>▷</span> Start dev server</div>
+          <div class="og-command og-command-child"><span>▷</span> Build project</div>
+          <div class="og-prompt"><span>›</span> npm run dev<span class="og-caret"></span></div>
+        </div>}
+        {project.theme === 'algebra' && <div class="og-equation"><span>2x + 8 = 16</span><span>2x = 8</span><strong>x = 4</strong><div class="og-equation-caption">Step-by-step simplification</div></div>}
+      </div>
+    </div> : <div class="og-site-art" aria-hidden="true">
+      <div class="og-tiles">{Array.from({ length: 25 }, (_, index) => {
+        const techIndex = [6, 8, 12, 16, 18, 22].indexOf(index);
+        const technology = techIndex >= 0 ? technologies[techIndex] : undefined;
+        return <div class:list={['og-tile', { 'og-tile-raised': technology }]}>{technology && <svg style={`color: ${technology[1]}`}><use href={`#tech-${technology[0]}`} /></svg>}</div>;
+      })}</div>
+    </div>}
+    <footer class="og-bottom"><span>{project ? profile.name : 'Fintech systems, reliable APIs & AI automation.'}</span><span>artaza.in{project && <span class="og-path">/projects/{project.slug}</span>}</span></footer>
+  </article>
+</div>
+
+<style>
+  .og-frame { container-type: inline-size; width: 100%; }
+  .og-card { position: relative; isolation: isolate; aspect-ratio: 1200 / 630; overflow: hidden; background: #000; color: #f1f1f1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+  .og-grid { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px); background-size: 4cqw 4cqw; mask-image: linear-gradient(90deg, transparent 25%, #000 75%); }
+  .og-grid::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 83% 47%, #ffffff0d, transparent 48%); }
+  .og-top, .og-bottom { position: absolute; inset-inline: 6cqw; display: flex; align-items: center; justify-content: space-between; }
+  .og-top { top: 3.6cqw; font-size: 1.5cqw; color: #a3a3a3; }
+  .og-brand { font-size: 2.4cqw; font-weight: 650; letter-spacing: -.12cqw; color: #f1f1f1; }
+  .og-copy { position: absolute; top: 17cqw; left: 6cqw; width: 48cqw; }
+  .og-title { margin: 0; font-size: 6.4cqw; font-weight: 600; line-height: 1.04; letter-spacing: -.34cqw; text-wrap: balance; }
+  .og-description { max-width: 44cqw; margin: 2cqw 0 0; color: #a3a3a3; font-size: 2.15cqw; line-height: 1.45; letter-spacing: -.035cqw; }
+  .og-tags { display: flex; gap: .7cqw; margin-top: 2.4cqw; }
+  .og-tags span { padding: .38cqw .8cqw; border: 1px solid #303030; border-radius: .4cqw; font-size: 1.2cqw; color: #b8b8b8; background: #080808; }
+  .og-bottom { bottom: 3.5cqw; padding-top: 1.7cqw; border-top: 1px solid #282828; font-size: 1.3cqw; color: #a3a3a3; }
+  .og-bottom > span:last-child { color: #f1f1f1; }
+  .og-path { color: #808080; }
+  .og-art { position: absolute; width: 35cqw; top: 9cqw; right: 5.6cqw; transform: perspective(100cqw) rotateY(-10deg) rotateZ(-5deg); }
+  .og-product { position: relative; min-height: 29cqw; padding: 2.2cqw; border: 1px solid #484848; border-radius: 1.4cqw; background: linear-gradient(145deg, #181818, #080808 70%); box-shadow: .8cqw 1.4cqw 0 #ffffff05, 0 2cqw 5cqw #000; line-height: 1.3; }
+  .og-product::before { content: ''; position: absolute; inset: -.65cqw; border: 1px solid #ffffff0b; border-radius: 1.9cqw; z-index: -1; }
+  .og-product-heading { display: flex; align-items: center; gap: 1.3cqw; font-size: 1.3cqw; color: #b8b8b8; }
+  .og-product-heading img { width: 5.4cqw; height: 5.4cqw; object-fit: contain; flex-shrink: 0; }
+  .og-stack { display: grid; gap: 1cqw; margin-top: 2cqw; }
+  .og-stack > div { display: flex; align-items: center; gap: 1.1cqw; padding: 1.15cqw; border: 1px solid #353535; border-radius: .7cqw; background: #141414; font-size: 1.5cqw; }
+  .og-stack small { display: block; margin-top: .3cqw; color: #888; font-size: 1.05cqw; }
+  .og-stack-icon { display: grid; place-items: center; width: 2.8cqw; height: 2.8cqw; background: #222; border-radius: .5cqw; color: #ccc; font-size: 1.7cqw; }
+  .og-check { margin-left: auto; color: #a3a3a3; }
+  .og-summary-art > svg { display: block; width: 100%; height: 6cqw; margin-top: 1.3cqw; }
+  .og-brief { position: relative; min-height: 10cqw; margin-top: .5cqw; padding: 1.4cqw; border: 1px solid #333; border-radius: .7cqw; }
+  .og-brief-label { font-size: 1.35cqw; }
+  .og-brief-line { width: 42%; height: .4cqw; margin-top: .8cqw; background: #444; border-radius: 1cqw; }
+  .og-brief-line:nth-child(3) { width: 36%; }
+  .og-brief-line:nth-child(4) { width: 28%; }
+  .og-bars { position: absolute; right: 1.4cqw; bottom: 1.4cqw; width: 12cqw; height: 6cqw; display: flex; align-items: end; gap: .55cqw; }
+  .og-bars span { flex: 1; background: #999; border-radius: .25cqw .25cqw 0 0; }
+  .og-bars span:nth-last-child(2) { background: #f1f1f1; }
+  .og-art-caption { display: block; margin-top: 1.5cqw; color: #888; font-size: 1.15cqw; }
+  .og-paper-stack { position: relative; width: 20cqw; margin: 1.5cqw auto 0; }
+  .og-paper-stack::before, .og-paper-stack::after { content: ''; position: absolute; inset: .3cqw; background: #252525; border: 1px solid #444; transform: rotate(10deg); }
+  .og-paper-stack::after { transform: rotate(-7deg); background: #888; }
+  .og-paper { position: relative; z-index: 1; padding: 1.7cqw; background: #efefef; color: #171717; box-shadow: 0 1cqw 2cqw #0006; }
+  .og-paper-title { display: block; font-size: 1.8cqw; font-weight: 600; letter-spacing: -.05cqw; }
+  .og-paper-subtitle { display: block; margin-top: .4cqw; font-size: 1cqw; color: #555; }
+  .og-paper-rule { height: 1px; margin-block: 1.2cqw; background: #999; }
+  .og-paper-line { display: block; height: .35cqw; margin-top: .7cqw; background: #bbb; width: 100%; }
+  .og-paper-line:nth-of-type(3n) { width: 65%; margin-bottom: 1.2cqw; }
+  .og-paper-export { display: block; margin-top: 1.5cqw; font-size: .9cqw; color: #555; }
+  .og-terminal { margin-top: 2cqw; border: 1px solid #3a3a3a; border-radius: .7cqw; background: #0a0a0a; overflow: hidden; }
+  .og-terminal-top { display: flex; align-items: center; gap: .45cqw; padding: 1cqw; border-bottom: 1px solid #303030; }
+  .og-terminal-top > span:not(:last-child) { width: .6cqw; height: .6cqw; border-radius: 50%; background: #666; }
+  .og-terminal-name { margin-left: auto; color: #888; font-size: 1cqw; }
+  .og-command { padding: 1.5cqw 1.3cqw .8cqw; font-size: 1.4cqw; }
+  .og-command span { margin-right: .6cqw; color: #888; }
+  .og-command-child { margin-left: 1.5cqw; padding-top: .7cqw; color: #aaa; }
+  .og-prompt { margin-top: 1.3cqw; padding: 1.5cqw; border-top: 1px solid #303030; font: 1.3cqw/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+  .og-prompt > span:first-child { color: #aaa; margin-right: .5cqw; }
+  .og-caret { display: inline-block; width: .6cqw; height: 1.3cqw; margin-left: .5cqw; vertical-align: middle; background: #ddd; }
+  .og-math-logo { display: grid; place-items: center; width: 5.4cqw; height: 5.4cqw; border: 1px solid #444; border-radius: .8cqw; font: italic 3.4cqw Georgia, serif; color: #f1f1f1; }
+  .og-equation { display: grid; gap: 1.5cqw; margin-top: 2.5cqw; text-align: center; font: 3cqw/1.1 Georgia, serif; }
+  .og-equation > span:nth-child(2) { color: #999; }
+  .og-equation strong { justify-self: center; padding: 1.1cqw 3.2cqw; border: 1px solid #555; border-radius: .5cqw; font-weight: 400; }
+  .og-equation-caption { margin-top: .3cqw; font: 1.15cqw/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #888; }
+  .og-site .og-copy { top: 13.1cqw; }
+  .og-site .og-title { font-size: 8.4cqw; letter-spacing: -.5cqw; }
+  .og-site .og-description { font-size: 2.4cqw; margin-top: 2cqw; }
+  .og-site-art { position: absolute; width: 38cqw; height: 38cqw; right: 5cqw; top: 8cqw; display: grid; place-items: center; }
+  .og-tiles { display: grid; grid-template-columns: repeat(5, 6.4cqw); gap: .8cqw; transform: perspective(80cqw) rotateX(48deg) rotateZ(-32deg) scale(.85); transform-style: preserve-3d; }
+  .og-tile { position: relative; display: grid; place-items: center; height: 6.4cqw; border: 1px solid #333; border-radius: .4cqw; background: #080808; box-shadow: 0 .6cqw 0 #141414, 0 .65cqw 0 1px #292929; }
+  .og-tile-raised { transform: translateZ(2.7cqw); border-color: #777; background: #151515; box-shadow: 0 .7cqw 0 #222, 0 .75cqw 0 1px #4a4a4a, 0 1.5cqw 2cqw #000, 0 0 2cqw #ffffff12; }
+  .og-tile svg { width: 3cqw; height: 3cqw; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 .35cqw currentColor); }
+</style>

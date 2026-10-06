@@ -1,0 +1,19 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import OGCard from '../../components/OGCard.astro';
+import TechSymbols from '../../components/TechSymbols.astro';
+import { profile, projects } from '../../data/portfolio';
+
+export function getStaticPaths() {
+  return [{ params: { slug: 'site' }, props: { project: undefined } }, ...projects.map(project => ({ params: { slug: project.slug }, props: { project } }))];
+}
+const { project } = Astro.props;
+---
+<SiteLayout title={`${project?.title ?? profile.name} — OG card preview`} description={`1200 × 630 sharing card preview for ${project?.title ?? 'artaza.in'}.`} bare noindex bodyClass="og-export">
+  <TechSymbols />
+  <main id="main" class="og-canvas"><OGCard project={project} heading="h1" /></main>
+</SiteLayout>
+
+<style>
+  .og-canvas { width: 1200px; height: 630px; flex-shrink: 0; }
+</style>
