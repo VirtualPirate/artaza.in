@@ -66,7 +66,8 @@ for (const [slug, title] of [['devsummary-desktop', 'DevSummary Desktop'], ['dev
 }
 const titles = new Set();
 const canonicals = new Set();
-const sitemap = read('dist/sitemap.xml');
+assert.ok(read('dist/sitemap-index.xml').includes(`<loc>${new URL('/sitemap-0.xml', siteUrl).href}</loc>`), 'Sitemap index lists the page sitemap');
+const sitemap = read('dist/sitemap-0.xml');
 for (const name of pages) {
   const html = read(`dist/${name}`);
   assert.doesNotMatch(html, /Jordan Parker|Example Labs|Sample Systems|hello@example\.com|https:\/\/(?:github\.com\/example|example\.com)|dummy article|Sample post/, `${name}: no placeholder identity or content`);
@@ -126,7 +127,9 @@ for (const slug of ['site', ...projectSlugs]) {
   assert.ok(preview.includes(`data-og-card="${slug}"`), `${slug}: correct card`);
   assert.doesNotMatch(preview, /<script[^>]*src=/, `${slug}: deterministic preview without client scripts`);
 }
-assert.ok(read('dist/robots.txt').includes(`Sitemap: ${new URL('/sitemap.xml', siteUrl).href}`));
+assert.ok(read('dist/robots.txt').includes(`Sitemap: ${new URL('/sitemap-index.xml', siteUrl).href}`));
+assert.ok(sitemap.includes(`<loc>${new URL('/blog/parallel-https-downloads/', siteUrl).href}</loc><lastmod>2026-10-06T00:00:00.000Z</lastmod>`), 'Posts carry lastmod from frontmatter');
+assert.ok(!sitemap.includes(`<loc>${siteUrl}</loc><lastmod>`), 'Pages without a content date omit lastmod');
 const jsFiles = readdirSync(new URL('_astro/', dist)).filter(name => name.endsWith('.js'));
 assert.ok(jsFiles.reduce((total, name) => total + statSync(new URL(`_astro/${name}`, dist)).size, 0) < 10000, 'Keep all site JavaScript under 10 KB uncompressed');
 
@@ -178,7 +181,7 @@ location.hash = '#unknown'; events.hashchange(); selected(0);
 tabs[0].events.keydown({ key: 'Tab', preventDefault() { assert.fail('Tab must keep its native behavior'); } });
 
 {
-  assert.doesNotMatch(work + read('dist/sitemap.xml') + read('dist/resume.txt'), /opengraph-viewer|opengraph-api|AZCreation|az-creation/i, 'Removed projects must stay out of listings, sitemap, and résumé');
+  assert.doesNotMatch(work + sitemap + read('dist/resume.txt'), /opengraph-viewer|opengraph-api|AZCreation|az-creation/i, 'Removed projects must stay out of listings, sitemap, and résumé');
   for (const slug of ['opengraph-viewer', 'opengraph-api', 'az-creation']) assert.ok(!pages.includes('projects/' + slug + '/index.html'));
   function listing(html, markup, label) {
     const cards = markup.map((card, index) => Object.assign(element(String(index)), {
