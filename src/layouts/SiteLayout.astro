@@ -79,5 +79,10 @@ const navigation = [{ label: 'Home', href: '/' }, { label: 'Blog', href: '/blog/
     {!bare && (
       <footer class="site-footer shell"><span>{profile.name}</span><a href={`mailto:${profile.email}`}>Say hello <span aria-hidden="true">↗</span></a></footer>
     )}
+    {!bare && <script>
+      // Session replay: production builds only, lazy-loaded so the recorder stays off the critical path.
+      const publicApiKey = import.meta.env.PUBLIC_RRWEB_API_KEY;
+      if (import.meta.env.PROD && publicApiKey) import('@rrweb/browser-client').then(({ start }) => start({ publicApiKey }));
+    </script>}
   </body>
 </html>

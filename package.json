@@ -11,6 +11,6 @@
     "test": "npm run check && npm run build && node scripts/check.mjs"
   },
   "engines": { "node": ">=22.12.0" },
-  "dependencies": { "@astrojs/sitemap": "3.7.4", "astro": "5.18.1", "sharp": "0.34.5" },
+  "dependencies": { "@astrojs/sitemap": "3.7.4", "@rrweb/browser-client": "2.1.7", "astro": "5.18.1", "sharp": "0.34.5" },
   "devDependencies": { "@astrojs/check": "0.9.9", "typescript": "5.9.3" }
 }

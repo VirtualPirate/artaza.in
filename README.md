@@ -22,6 +22,11 @@ pnpm preview    # Serve the built site locally
 dependencies. Deploy only `dist/` to any static host. Configure that host to serve
 `404.html` for missing pages. The grid-shapes demo lives at `/grid-shapes/`.
 
+Session replay uses [rrweb Cloud](https://rrweb.com/docs/cloud/browser-client).
+Set `PUBLIC_RRWEB_API_KEY` (a `public_key_rr_…` key) in `.env` or the host's
+build environment. Production builds then lazy-load the recorder on every page
+except the bare OG and grid-shapes previews. Without the key, no replay code ships.
+
 Review the website and all six project OG cards at `/og/`. Each card has a
 full-size HTML view at `/og/site/` or `/og/{project-slug}/`, with a fixed
 1200 × 630 canvas. Edit `src/components/OGCard.astro` to adjust the designs;
