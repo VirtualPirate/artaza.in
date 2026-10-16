@@ -4,8 +4,5 @@
   "compatibility_flags": ["global_fetch_strictly_public"],
   // Fully static site: build, then serve dist/ as assets with no Worker script.
   "build": { "command": "npm run build" },
-  "assets": { "directory": "./dist", "not_found_handling": "404-page" },
-  "vars": {
-    "PUBLIC_RRWEB_API_KEY": "public_key_rr_SQ2CWGP163K8K1TN34BK9QEYZBHGA47M"
-  }
+  "assets": { "directory": "./dist", "not_found_handling": "404-page" }
 }
